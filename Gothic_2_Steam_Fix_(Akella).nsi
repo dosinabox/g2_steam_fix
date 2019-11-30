@@ -14,7 +14,7 @@ Unicode true
 
 !define MOD_NAME "Gothic 2 Steam Fix"
 !define MOD_VERSION "11.2019"
-!define MOD_DETAILED_VERSION "19.11.26.0"
+!define MOD_DETAILED_VERSION "19.11.30.0"
 !define MOD_AUTHOR "D36"
 
 Name "${MOD_NAME}"
@@ -44,8 +44,7 @@ DirText $DirectoryText
 
 !define MUI_TEXT_COMPONENTS_TITLE "Выбор компонентов для установки"
 !define MUI_TEXT_COMPONENTS_SUBTITLE " "
-!define MUI_COMPONENTSPAGE_TEXT_TOP "Выберите компоненты ${MOD_NAME}, которые вы хотите установить.$\nНажмите кнопку \
-'Установить' для продолжения."
+!define MUI_COMPONENTSPAGE_TEXT_TOP "Выберите компоненты ${MOD_NAME}, которые вы хотите установить. Нажмите кнопку 'Установить' для продолжения."
 !define MUI_COMPONENTSPAGE_TEXT_COMPLIST "Компоненты для установки:"
 !define MUI_COMPONENTSPAGE_SMALLDESC
 
@@ -227,50 +226,20 @@ SectionGroupEnd
 
 Section "Неофициальное обновление" SecAdditional_3
 
-	IfFileExists "$INSTDIR\Data\Textures_Russian.vdf" fix_russian fix_notrussian
-	fix_russian:
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v20_hotfix.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v20_hotfix.mod"
 	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.vdf"
 	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.mod"
 	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.vdf"
 	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.mod"
+
 	SetOutPath "$INSTDIR\Data"
 	File "g2a_nr_scriptpatch.vdf"
+
 	SetOutPath "$INSTDIR\System"
 	!insertmacro GMF_File_Rename "GothicGame_fixed.ini" "GothicGame.ini"
+
 	SetOutPath "$INSTDIR"
 	File "Changelog_G2a_NR_ScriptPatch_v23.txt"
-	goto end_of_russian_fix_test
-	fix_notrussian:
-	end_of_russian_fix_test:
 
-	IfFileExists "$INSTDIR\Data\Textures_Addon_Menu_English.vdf" fix_english fix_notenglish
-	fix_english:
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v20_hotfix.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v20_hotfix.mod"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.mod"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.mod"
-	!insertmacro GMF_Delete "$INSTDIR\Changelog_G2a_NR_ScriptPatch_v23.txt"
-	SetOutPath "$INSTDIR\Data"
-	File "Unofficial_Patch_EN.vdf"
-	SetOutPath "$INSTDIR"
-	File "Unofficial_Patch_EN_Readme.txt"
-	goto end_of_english_fix_test
-	fix_notenglish:
-	end_of_english_fix_test:
-
-	IfFileExists "$INSTDIR\Manuel\G2_Short_Manual_FRa.pdf" fix_french fix_notfrench
-	fix_french:
-	!insertmacro GMF_Delete "$INSTDIR\Data\Unofficial_Patch_EN.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Unofficial_Patch_EN_Readme.txt"
-	goto end_of_french_fix_test
-	fix_notfrench:
-	end_of_french_fix_test:
-	
 SectionEnd
 
 
@@ -354,12 +323,6 @@ $\n$\nЗатем нажмите кнопку 'Далее' для продолжения."
 	System::Call 'user32::GetSystemMetrics(i 1) i .r1'
 	StrCpy $RESX $0
 	StrCpy $RESY $1
-	System::Call kernel32::GetSystemDEPPolicy()i.r3
-	StrCmp $3 "error" skipDEP
-	IntCmp $3 ${DEP_SYSTEM_POLICY_TYPE_ALWAYSOFF} skipDEP
-	IntCmp $3 ${DEP_SYSTEM_POLICY_TYPE_OPTIN} skipDEP
-	MessageBox MB_OK|MB_ICONEXCLAMATION "Включена система предотвращения выполнения данных Windows (DEP). Отключите её и перезагрузите компьютер для избежания вылета при начале новой игры."
-	skipDEP:
 FunctionEnd
 
 Function .onVerifyInstDir
