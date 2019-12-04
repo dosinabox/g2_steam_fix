@@ -11,12 +11,12 @@
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "08.2019"
-!define MOD_DETAILED_VERSION "19.8.2.0"
+!define MOD_VERSION "11.2019"
+!define MOD_DETAILED_VERSION "19.11.30.0"
 !define MOD_AUTHOR "D36"
 
 Name "${MOD_NAME}"
-OutFile "Gothic_2_Steam_Fix_08.2019.exe"
+OutFile "Gothic_2_Steam_Fix_${MOD_VERSION}.exe"
 
 VIProductVersion "${MOD_DETAILED_VERSION}"
 VIAddVersionKey "FileVersion" "${MOD_DETAILED_VERSION}"
@@ -137,35 +137,27 @@ Section "Main" SecMain
 	!insertmacro _ReplaceInFile "Gothic.ini" "1280" "$RESX"
 	!insertmacro _ReplaceInFile "Gothic.ini" "1024" "$RESY"
 
-	IfFileExists "$INSTDIR\Data\Speech_English_Patch_Atari.vdf" english_found english_not_found
+	IfFileExists "$INSTDIR\Manuel\G2_Short_Manual_FRa.pdf" end_of_tests french_not_found
+	french_not_found:
+
+	IfFileExists "$INSTDIR\Manuale\G2AddOn_HB_ITA.pdf" end_of_tests italian_not_found
+	italian_not_found:
+
+	IfFileExists "$INSTDIR\Data\Speech_English_Patch_Atari.vdf" english_found end_of_tests
 	english_found:
+
 	Rename $INSTDIR\_work\data\scripts\content\cutscene\ou.dat $INSTDIR\_work\data\scripts\content\cutscene\ou.bin
 	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\content\cutscene\ou.lsc"
 	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\_compiled\ouinfo.inf"
+
 	SetOutPath "$INSTDIR\Data"
 	File "Textures_Addon_Menu_English.vdf"
 	File "Unofficial_Patch_EN.vdf"
+
 	SetOutPath "$INSTDIR"
 	File "Unofficial_Patch_EN_Readme.txt"
-	goto end_of_test1
-	english_not_found:
-	end_of_test1:
 
-	IfFileExists "$INSTDIR\Manuel\G2_Short_Manual_FRa.pdf" french_found french_not_found
-	french_found:
-	!insertmacro GMF_Delete "$INSTDIR\Data\Unofficial_Patch_EN.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Unofficial_Patch_EN_Readme.txt"
-	goto end_of_test2
-	french_not_found:
-	end_of_test2:
-
-	IfFileExists "$INSTDIR\Manuale\G2AddOn_HB_ITA.pdf" italian_found italian_not_found
-	italian_found:
-	!insertmacro GMF_Delete "$INSTDIR\Data\Unofficial_Patch_EN.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Unofficial_Patch_EN_Readme.txt"
-	goto end_of_test3
-	italian_not_found:
-	end_of_test3:
+	end_of_tests:
 
 SectionEnd
 
@@ -191,13 +183,6 @@ Function .onInit
 	System::Call 'user32::GetSystemMetrics(i 1) i .r1'
 	StrCpy $RESX $0
 	StrCpy $RESY $1
-	System::Call kernel32::GetSystemDEPPolicy()i.r3
-	;MessageBox MB_OK|MB_ICONEXCLAMATION "DEP is: $3"
-	StrCmp $3 "error" skipDEP
-	IntCmp $3 ${DEP_SYSTEM_POLICY_TYPE_ALWAYSOFF} skipDEP
-	IntCmp $3 ${DEP_SYSTEM_POLICY_TYPE_OPTIN} skipDEP
-	MessageBox MB_OK|MB_ICONEXCLAMATION "Windows Data Execution Prevention (DEP) is currently enabled. Please disable it and restart your computer to avoid 'Access Violation' error."
-	skipDEP:
 FunctionEnd
 
 Function .onVerifyInstDir

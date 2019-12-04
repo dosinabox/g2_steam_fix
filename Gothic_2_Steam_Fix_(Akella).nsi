@@ -13,8 +13,8 @@ Unicode true
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "11.2019"
-!define MOD_DETAILED_VERSION "19.11.30.0"
+!define MOD_VERSION "12.2019"
+!define MOD_DETAILED_VERSION "19.12.9.0"
 !define MOD_AUTHOR "D36"
 
 Name "${MOD_NAME}"
@@ -30,7 +30,7 @@ VIAddVersionKey "ProductVersion" "${MOD_VERSION}"
 ##      Настройки интерфейса     ##
 ###################################
 
-!define MUI_ICON "Gothic2_Steam_Fix.ico"
+!define MUI_ICON "icon.ico"
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP "logo.bmp"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "pic.bmp"
@@ -151,16 +151,17 @@ Section "Основные патчи и обновления" SecMain
 	!insertmacro _ReplaceInFile "Gothic.ini" "1280" "$RESX"
 	!insertmacro _ReplaceInFile "Gothic.ini" "1024" "$RESY"
 
-	IfFileExists "$INSTDIR\Data\Speech_English_Patch_Atari.vdf" english_found english_not_found
+	IfFileExists "$INSTDIR\Data\Speech_English_Patch_Atari.vdf" english_found end_of_test1
+
 	english_found:
 	Rename $INSTDIR\_work\data\scripts\content\cutscene\ou.dat $INSTDIR\_work\data\scripts\content\cutscene\ou.bin
 	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\content\cutscene\ou.lsc"
 	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\_compiled\ouinfo.inf"
+
 	SetOutPath "$INSTDIR\Data"
 	File "Textures_Addon_Menu_English.vdf"
-	goto end_of_test
-	english_not_found:
-	end_of_test:
+
+	end_of_test1:
 
 SectionEnd
 
@@ -200,6 +201,7 @@ Section "Озвучка и видео" SecAdditional_2
 	!insertmacro GMF_Delete "$INSTDIR\Data\Speech_Parlan_engl.vdf"
 	!insertmacro GMF_Delete "$INSTDIR\Data\Speech_Wegelagerer_Deutsch.vdf"
 	!insertmacro GMF_Delete "$INSTDIR\Data\Speech2.vdf"
+	!insertmacro GMF_Delete "$INSTDIR\Data\Speech3.vdf"
 	!insertmacro GMF_Delete "$INSTDIR\Data\Speech_hotfix.vdf"
 	!insertmacro GMF_Delete "$INSTDIR\Data\Speech_patch.vdf"
 
@@ -226,12 +228,12 @@ SectionGroupEnd
 
 Section "Неофициальное обновление" SecAdditional_3
 
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.mod"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.mod"
-
 	SetOutPath "$INSTDIR\Data"
+	File "g2a_nr_basepatch.vdf"
+
+	IfFileExists "$INSTDIR\Data\Textures_Russian.vdf" fix_russian end_of_test2
+
+	fix_russian:
 	File "g2a_nr_scriptpatch.vdf"
 
 	SetOutPath "$INSTDIR\System"
@@ -240,40 +242,50 @@ Section "Неофициальное обновление" SecAdditional_3
 	SetOutPath "$INSTDIR"
 	File "Changelog_G2a_NR_ScriptPatch_v23.txt"
 
-SectionEnd
+	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.vdf"
+	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.mod"
+	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.vdf"
+	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.mod"
 
-
-Section "Широкоформатный монитор" SecAdditional_4
-
-	SetOutPath "$INSTDIR\Data"
-	File "Textures_Widescreen.vdf"
-	
-	SetOutPath "$INSTDIR\System"
-	!insertmacro _ReplaceInFile "Gothic.ini" "invMaxColumns=5" "invMaxColumns=6"
-
-	IfFileExists "$INSTDIR\Data\Textures_Russian.vdf" russian_found russian_not_found
-	russian_found:
-	SetOutPath "$INSTDIR\Data"
-	File "Textures_Widescreen_Russian.vdf"
-	goto end_of_test2
-	russian_not_found:
 	end_of_test2:
 
 SectionEnd
 
 
-Section /o "Совместимость с ноутбуками" SecAdditional_5
+Section "Широкоформатный монитор" SecAdditional_4
 
-	SetOutPath "$APPDATA\dgVoodoo"
-	File "dgVoodoo.conf"
+	SetOutPath "$INSTDIR\System"
+	!insertmacro _ReplaceInFile "Gothic.ini" "invMaxColumns=5" "invMaxColumns=6"
+
+	SetOutPath "$INSTDIR\Data"
+	File "Textures_Widescreen.vdf"
+
+	IfFileExists "$INSTDIR\Data\Textures_Russian.vdf" russian_found end_of_test3
+
+	russian_found:
+	File "Textures_Widescreen_Russian.vdf"
+
+	end_of_test3:
+
+SectionEnd
+
+
+Section /o "Совместимость с ноутбуками" SecAdditional_5
 	
 	SetOutPath "$INSTDIR\System"
-	File "D3DImm.dll"
-	File "DDraw.dll"
-	!insertmacro GMF_File_Rename "Gothic_laptop.ini" "Gothic.ini"
-	!insertmacro GMF_File_Rename "SystemPack_laptop.ini" "SystemPack.ini"
-	!insertmacro _ReplaceInFile "Gothic.ini" "1366" "$RESX"
-	!insertmacro _ReplaceInFile "Gothic.ini" "768" "$RESY"
+	!insertmacro _ReplaceInFile "Gothic.ini" "sightValue=9" "sightValue=4"
+	!insertmacro _ReplaceInFile "Gothic.ini" "zFogRadial=1" "zFogRadial=0"
+	!insertmacro _ReplaceInFile "Gothic.ini" "zDetailTexturesEnabled=1" "zDetailTexturesEnabled=0"
+	!insertmacro _ReplaceInFile "Gothic.ini" "zVobFarClipZScale=9" "zVobFarClipZScale=4"
+	!insertmacro _ReplaceInFile "Gothic.ini" "zFarClipAlphaFade=1" "zFarClipAlphaFade=0"
+	!insertmacro _ReplaceInFile "Gothic.ini" "zWaterAniEnabled=1" "zWaterAniEnabled=0"
+	!insertmacro _ReplaceInFile "Gothic.ini" "zCloudShadowScale=1" "zCloudShadowScale=0"
+	!insertmacro _ReplaceInFile "Gothic.ini" "NOAMBIENTPFX=0" "NOAMBIENTPFX=1"
+	!insertmacro _ReplaceInFile "Gothic.ini" "zAmbientPFXEnabled=1" "zAmbientPFXEnabled=0"
+	!insertmacro _ReplaceInFile "Gothic.ini" "zEnvMappingEnabled=1" "zEnvMappingEnabled=0"
+	!insertmacro _ReplaceInFile "Gothic.ini" "zWindEnabled=1" "zWindEnabled=0"
+	!insertmacro _ReplaceInFile "SystemPack.ini" "Disable_D3DVBCAPS_WRITEONLY=1" "Disable_D3DVBCAPS_WRITEONLY=0"
+	!insertmacro _ReplaceInFile "SystemPack.ini" "AnisotropicFiltering=16" "AnisotropicFiltering=0"
 
 SectionEnd
 
@@ -288,7 +300,7 @@ LangString DESC_SecAdditional_1 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите
 LangString DESC_SecAdditional_2 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русскую озвучку и видео от Акеллы."
 LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Модификация, исправляющая многочисленные баги и недоработки. Требуется начало новой игры!"
 LangString DESC_SecAdditional_4 ${LANG_RUSSIAN} "Выберите эту опцию, если у вашего ПК широкоформатный монитор (16x9 или 16х10)."
-LangString DESC_SecAdditional_5 ${LANG_RUSSIAN} "Утилиты и настройки для запуска игры на ноутбуке (dgvoodoo и специальные конфиги)."
+LangString DESC_SecAdditional_5 ${LANG_RUSSIAN} "Выберите эту опцию, если предполагается запуск игры на ноутбуке."
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SecMain} $(DESC_SecMain)
