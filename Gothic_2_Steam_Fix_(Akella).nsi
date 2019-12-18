@@ -14,7 +14,7 @@ Unicode true
 
 !define MOD_NAME "Gothic 2 Steam Fix"
 !define MOD_VERSION "12.2019"
-!define MOD_DETAILED_VERSION "19.12.9.0"
+!define MOD_DETAILED_VERSION "19.12.14.0"
 !define MOD_AUTHOR "D36"
 
 Name "${MOD_NAME}"
@@ -131,9 +131,6 @@ Section "Основные патчи и обновления" SecMain
 
 	SetOutPath "$INSTDIR\_work\data\Video"
 	File "Extro_PAL.bik"
-	File "Logo1.bik"
-
-	!insertmacro GMF_Delete "$INSTDIR\_work\data\Video\Logo2.bik"
 
 	SetOutPath "$INSTDIR\Data"
 	File "SystemPack.vdf"
@@ -173,6 +170,7 @@ Section "Текст и субтитры" SecAdditional_1
 	!insertmacro GMF_Delete "$INSTDIR\Data\Textures_multilingual_Jowood.vdf"
 	!insertmacro GMF_Delete "$INSTDIR\Data\Textures_Addon_Menu_English.vdf"
 	!insertmacro GMF_Delete "$INSTDIR\Data\Textures_Fonts_Apostroph.vdf"
+	!insertmacro GMF_Delete "$INSTDIR\Data\Unofficial_Patch_EN.vdf"
 	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\_compiled\ouinfo.inf"
 	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\content\cutscene\ou.dat"
 	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\content\cutscene\ou.lsc"
@@ -253,6 +251,11 @@ SectionEnd
 
 
 Section "Широкоформатный монитор" SecAdditional_4
+
+	SetOutPath "$INSTDIR\_work\data\Video"
+	File "Logo1.bik"
+
+	!insertmacro GMF_Delete "$INSTDIR\_work\data\Video\Logo2.bik"
 
 	SetOutPath "$INSTDIR\System"
 	!insertmacro _ReplaceInFile "Gothic.ini" "invMaxColumns=5" "invMaxColumns=6"
