@@ -11,8 +11,8 @@
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "12.2019"
-!define MOD_DETAILED_VERSION "19.12.18.0"
+!define MOD_VERSION "03.2020"
+!define MOD_DETAILED_VERSION "20.3.1.0"
 !define MOD_AUTHOR "D36"
 
 Name "${MOD_NAME}"

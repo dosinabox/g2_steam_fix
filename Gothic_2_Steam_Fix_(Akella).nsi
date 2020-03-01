@@ -13,8 +13,8 @@ Unicode true
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "12.2019"
-!define MOD_DETAILED_VERSION "19.12.14.0"
+!define MOD_VERSION "03.2020"
+!define MOD_DETAILED_VERSION "20.3.1.0"
 !define MOD_AUTHOR "D36"
 
 Name "${MOD_NAME}"
@@ -138,27 +138,43 @@ Section "Основные патчи и обновления" SecMain
 	SetOutPath "$INSTDIR\System"
 	File "Gothic.ini"
 	File "Gothic2.exe"
+	File "GothicStarter.exe"
 	File "GothicGame.ini"
 	File "GothicGame.rtf"
-	File "GothicStarter.exe"
 	File "Shw32.dll"
-	File "sp.log"
 	File "SystemPack.ini"
 	File "vdfs32g.dll"
 	!insertmacro _ReplaceInFile "Gothic.ini" "1280" "$RESX"
 	!insertmacro _ReplaceInFile "Gothic.ini" "1024" "$RESY"
 
-	IfFileExists "$INSTDIR\Data\Speech_English_Patch_Atari.vdf" english_found end_of_test1
+	IfFileExists "$INSTDIR\Manuel\G2_Short_Manual_FRa.pdf" fix_title french_not_found
+	french_not_found:
 
-	english_found:
+	IfFileExists "$INSTDIR\Manuale\G2AddOn_HB_ITA.pdf" fix_subtitles italian_not_found
+	italian_not_found:
+
+	IfFileExists "$INSTDIR\Gothic2_Handbuch_GE.pdf" end_of_tests german_not_found
+	german_not_found:
+
+	IfFileExists "$INSTDIR\system\gothic2nk.ico" end_of_tests polish_not_found
+	polish_not_found:
+
+	IfFileExists "$INSTDIR\G2_Gold_Manual_ESP.pdf" fix_subtitles spanish_not_found
+	spanish_not_found:
+
+	IfFileExists "$INSTDIR\Data\Speech_English_Patch_Atari.vdf" fix_subtitles end_of_tests
+	fix_subtitles:
+
 	Rename $INSTDIR\_work\data\scripts\content\cutscene\ou.dat $INSTDIR\_work\data\scripts\content\cutscene\ou.bin
 	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\content\cutscene\ou.lsc"
 	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\_compiled\ouinfo.inf"
+	goto fix_title
 
+	fix_title:
 	SetOutPath "$INSTDIR\Data"
 	File "Textures_Addon_Menu_English.vdf"
 
-	end_of_test1:
+	end_of_tests:
 
 SectionEnd
 
@@ -217,7 +233,7 @@ Section "Озвучка и видео" SecAdditional_2
 	File "Speech_Add.vdf"
 
 	SetOutPath "$INSTDIR"
-	File "Speech_Changelog.txt"
+	File "Changelog_Speech.txt"
 
 SectionEnd
 
@@ -238,12 +254,16 @@ Section "Неофициальное обновление" SecAdditional_3
 	!insertmacro GMF_File_Rename "GothicGame_fixed.ini" "GothicGame.ini"
 
 	SetOutPath "$INSTDIR"
-	File "Changelog_G2a_NR_ScriptPatch_v23.txt"
+	File "Changelog_G2a_NR_ScriptPatch_v24.txt"
 
 	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.vdf"
 	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.mod"
 	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.vdf"
 	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.mod"
+	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v23_hotfix.vdf"
+	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v23_hotfix.mod"
+	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v24_hotfix.vdf"
+	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v24_hotfix.mod"
 
 	end_of_test2:
 
