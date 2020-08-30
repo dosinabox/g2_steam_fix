@@ -1,24 +1,33 @@
-###################################
-##      Подключенные хидеры      ##
-###################################
-
 Unicode true
+SetCompressor lzma
+var DirectoryText
 
 !include "MUI.nsh"
 !include "FileFunc.nsh"
-!include "GothicFixesCommon.nsh"
+
+###################################
+##            Макросы            ##
+###################################
+
+!macro GMF_File_Rename FILENAME_1 FILENAME_2
+	File "${FILENAME_1}"
+	IfFileExists "${FILENAME_2}" "" +2
+	Delete "${FILENAME_2}"
+	Rename "${FILENAME_1}" "${FILENAME_2}"
+!macroend
 
 ###################################
 ##            Основное           ##
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "03.2020"
-!define MOD_DETAILED_VERSION "20.3.1.0"
+!define MOD_VERSION "09.2020"
+!define MOD_DETAILED_VERSION "20.9.1.0"
 !define MOD_AUTHOR "D36"
+!define SCRIPTPATCH_VERSION "25"
 
 Name "${MOD_NAME}"
-OutFile "Gothic_2_Steam_Fix_(Akella)_${MOD_VERSION}.exe"
+OutFile "Gothic_2_Steam_Fix_RU_Akella_${MOD_VERSION}.exe"
 
 VIProductVersion "${MOD_DETAILED_VERSION}"
 VIAddVersionKey "FileVersion" "${MOD_DETAILED_VERSION}"
@@ -80,50 +89,23 @@ BrandingText " "
 Section "Основные патчи и обновления" SecMain
 	SectionIn RO
 
-	!insertmacro GMF_Delete "$INSTDIR\delsaves.exe"
-	!insertmacro GMF_Delete "$INSTDIR\g2addon-2.6_readme.htm"
-	!insertmacro GMF_Delete "$INSTDIR\Readme.txt"
-	!insertmacro GMF_Delete "$INSTDIR\Readme_UK.txt"
-	!insertmacro GMF_Delete "$INSTDIR\site.url"
-	!insertmacro GMF_Delete "$INSTDIR\VDFS.dmp"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Breitbild_Patch.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\MENU_AutoScale_G2.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\FONT_High_Resolution.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\FONT_High_Resolution_1.1.0.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\FONT_High_Resolution_2.0.2.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\FONT_High_Resolution_2.0.3.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\FONT_High_Resolution_2.1.0.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\FONT_High_Resolution_2.2.0.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\FONT_High_Resolution_2.2.1.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\FONT_High_Resolution_3_0_1_Cyrillic.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\FONT_High_Resolution_3_0_1_Latin.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\System\dmband.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\dmcompos.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\dmime.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\dmloader.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\dmstyle.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\dmsynth.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\dmusic.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\MssDS3D.m3d.exe"
-	!insertmacro GMF_Delete "$INSTDIR\System\D3dim700.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\D3DImm.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\Vdfs32e.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\Vdfs32e.exe"
-	!insertmacro GMF_Delete "$INSTDIR\System\Vdfs32g.exe"
-	!insertmacro GMF_Delete "$INSTDIR\System\KillHelp.exe"
-	!insertmacro GMF_Delete "$INSTDIR\System\ar.exe"
-	!insertmacro GMF_Delete "$INSTDIR\System\AntTweakBar.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\Assimp32.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\d3dcompiler_47.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\ddraw.dll"
-	!insertmacro GMF_Delete "$INSTDIR\System\GFSDK_SSAO.win32.dll"
+	Delete "$INSTDIR\VDFS.dmp"
+	Delete "$INSTDIR\System\ddraw.dll"
+	Delete "$INSTDIR\System\dinput.dll"
+	Delete "$INSTDIR\Data\g2a_nr_basepatch.vdf"
+	Delete "$INSTDIR\Data\g2a_nr_scriptpatch.vdf"
+	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.vdf"
+	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.vdf"
+	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v23_hotfix.vdf"
+	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v24_hotfix.vdf"
+	Delete "$INSTDIR\Data\SystemPack.vdf"
+	Delete "$INSTDIR\_work\data\Video\Logo2.bik"
 
 	CreateDirectory "$INSTDIR\Data\ModVDF"
 	CreateDirectory "$INSTDIR\Saves\current"
 
 	SetOutPath "$INSTDIR"
-	File "VDFS.cfg"
-	File "SystemPack - Форум.url"
+	File "Union.url"
 
 	SetOutPath "$INSTDIR\_work\data\Music\NewWorld"
 	File "Xardas Tower.sty"
@@ -131,93 +113,113 @@ Section "Основные патчи и обновления" SecMain
 
 	SetOutPath "$INSTDIR\_work\data\Video"
 	File "Extro_PAL.bik"
+	File "Logo1.bik"
 
 	SetOutPath "$INSTDIR\Data"
-	File "SystemPack.vdf"
+	File "Union.vdf"
+	File "zGamePad.vdf"
 
 	SetOutPath "$INSTDIR\System"
+	!insertmacro GMF_File_Rename "Gothic2.exe" "GothicStarter.exe"
 	File "Gothic.ini"
 	File "Gothic2.exe"
-	File "GothicStarter.exe"
 	File "GothicGame.ini"
 	File "GothicGame.rtf"
+	File "GothicMod.exe"
 	File "Shw32.dll"
 	File "SystemPack.ini"
+	File "Union.patch"
 	File "vdfs32g.dll"
-	!insertmacro _ReplaceInFile "Gothic.ini" "1280" "$RESX"
-	!insertmacro _ReplaceInFile "Gothic.ini" "1024" "$RESY"
 
-	IfFileExists "$INSTDIR\Manuel\G2_Short_Manual_FRa.pdf" fix_title french_not_found
+	SetOutPath "$INSTDIR\System\autorun"
+	File "AutoScreenRes.dll"
+
+	IfFileExists "$INSTDIR\Manuel\G2_Short_Manual_FRa.pdf" end_of_tests french_not_found
 	french_not_found:
 
-	IfFileExists "$INSTDIR\Manuale\G2AddOn_HB_ITA.pdf" fix_subtitles italian_not_found
-	italian_not_found:
+	IfFileExists "$INSTDIR\system\gothic2nk.ico" end_of_tests polish_not_found
+	polish_not_found:
 
 	IfFileExists "$INSTDIR\Gothic2_Handbuch_GE.pdf" end_of_tests german_not_found
 	german_not_found:
 
-	IfFileExists "$INSTDIR\system\gothic2nk.ico" end_of_tests polish_not_found
-	polish_not_found:
+	IfFileExists "$INSTDIR\Manuale\G2AddOn_HB_ITA.pdf" fix_subtitles italian_not_found
+	italian_not_found:
 
 	IfFileExists "$INSTDIR\G2_Gold_Manual_ESP.pdf" fix_subtitles spanish_not_found
 	spanish_not_found:
 
 	IfFileExists "$INSTDIR\Data\Speech_English_Patch_Atari.vdf" fix_subtitles end_of_tests
+
 	fix_subtitles:
-
 	Rename $INSTDIR\_work\data\scripts\content\cutscene\ou.dat $INSTDIR\_work\data\scripts\content\cutscene\ou.bin
-	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\content\cutscene\ou.lsc"
-	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\_compiled\ouinfo.inf"
-	goto fix_title
-
-	fix_title:
-	SetOutPath "$INSTDIR\Data"
-	File "Textures_Addon_Menu_English.vdf"
 
 	end_of_tests:
 
 SectionEnd
 
 
-SectionGroup "Русификация от Акеллы" Group1
+Section /o "Расширение доступной памяти" SecAdditional_1
 
-Section "Текст и субтитры" SecAdditional_1
+	SetOutPath "$INSTDIR\System"
+	!insertmacro GMF_File_Rename "GothicMod_4gb.exe" "GothicMod.exe"
 
-	!insertmacro GMF_Delete "$INSTDIR\Data\Textures_multilingual_Jowood.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Textures_Addon_Menu_English.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Textures_Fonts_Apostroph.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Unofficial_Patch_EN.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\_compiled\ouinfo.inf"
-	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\content\cutscene\ou.dat"
-	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\content\cutscene\ou.lsc"
-	!insertmacro GMF_Delete "$INSTDIR\_work\data\scripts\content\cutscene\ou.csl"
-	!insertmacro GMF_Delete "$INSTDIR\_work\data\video\Addon_Title.bik"
+SectionEnd
+
+
+SectionGroup /e "Русификация от Акеллы" Group1
+
+Section "Текст и субтитры" SecAdditional_2
+
+	Delete "$INSTDIR\Data\Textures_multilingual_Jowood.vdf"
+	Delete "$INSTDIR\Data\Textures_Addon_Menu_English.vdf"
+	Delete "$INSTDIR\Data\Textures_Fonts_Apostroph.vdf"
+	Delete "$INSTDIR\_work\data\video\Addon_Title.bik"
 
 	SetOutPath "$INSTDIR\_work\data\scripts\_compiled"
-	File "gothic.dat"
-	File "menu.dat"
+	File "GOTHIC.DAT"
+	File "MENU.DAT"
 
 	SetOutPath "$INSTDIR\_work\data\scripts\content\cutscene"
-	File "OU.bin"
+	File "OU.BIN"
+
+	SetOutPath "$INSTDIR\System"
+	File "G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}.ini"
+	File "G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}.rtf"
 
 	SetOutPath "$INSTDIR\Data"
 	File "Textures_Russian.vdf"
 	File "Fonts_Russian.vdf"
 
+	SetOutPath "$INSTDIR\Data\ModVDF"
+	File "g2a_nr_scriptpatch_v${SCRIPTPATCH_VERSION}.mod"
+	File "g2a_nr_scriptpatch_v${SCRIPTPATCH_VERSION}_plugins.mod"
+
+	SetOutPath "$INSTDIR"
+	File "Changelog_G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}.txt"
+
 SectionEnd
 
 
-Section "Озвучка и видео" SecAdditional_2
+Section "Озвучка и видео" SecAdditional_3
 	
-	!insertmacro GMF_Delete "$INSTDIR\Data\Speech_Addon_Patch.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Speech_English_Patch_Atari.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Speech_heyou_citygde_engl.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Speech_Parlan_engl.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Speech_Wegelagerer_Deutsch.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Speech2.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Speech3.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Speech_hotfix.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\Speech_patch.vdf"
+	Delete "$INSTDIR\Data\Speech_Addon_Patch.vdf"
+	Delete "$INSTDIR\Data\Speech_English_Patch_Atari.vdf"
+	Delete "$INSTDIR\Data\Speech_heyou_citygde_engl.vdf"
+	Delete "$INSTDIR\Data\Speech_Parlan_engl.vdf"
+	Delete "$INSTDIR\Data\Speech_Wegelagerer_Deutsch.vdf"
+	Delete "$INSTDIR\Data\Speech2.vdf"
+	Delete "$INSTDIR\Data\Speech3.vdf"
+	Delete "$INSTDIR\Data\Speech_hotfix.vdf"
+	Delete "$INSTDIR\Data\Speech_patch.vdf"
+	Delete "$INSTDIR\Data\Speech_Add.vdf"
+
+	SetOutPath "$INSTDIR\Data"
+	File "Speech1.vdf"
+	File "Speech_Addon.vdf"
+
+	SetOutPath "$INSTDIR\Data\ModVDF"
+	File "g2a_nr_scriptpatch_v${SCRIPTPATCH_VERSION}_speech_add.mod"
 
 	SetOutPath "$INSTDIR\_work\data\Video"
 	File "DragonAttack.bik"
@@ -227,11 +229,6 @@ Section "Озвучка и видео" SecAdditional_2
 	File "Intro_Addon.bik"
 	File "OrcAttack.bik"
 
-	SetOutPath "$INSTDIR\Data"
-	File "Speech1.vdf"
-	File "Speech_Addon.vdf"
-	File "Speech_Add.vdf"
-
 	SetOutPath "$INSTDIR"
 	File "Changelog_Speech.txt"
 
@@ -240,90 +237,15 @@ SectionEnd
 SectionGroupEnd
 
 
-Section "Неофициальное обновление" SecAdditional_3
-
-	SetOutPath "$INSTDIR\Data"
-	File "g2a_nr_basepatch.vdf"
-
-	IfFileExists "$INSTDIR\Data\Textures_Russian.vdf" fix_russian end_of_test2
-
-	fix_russian:
-	File "g2a_nr_scriptpatch.vdf"
-
-	SetOutPath "$INSTDIR\System"
-	!insertmacro GMF_File_Rename "GothicGame_fixed.ini" "GothicGame.ini"
-
-	SetOutPath "$INSTDIR"
-	File "Changelog_G2a_NR_ScriptPatch_v24.txt"
-
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.mod"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.mod"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v23_hotfix.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v23_hotfix.mod"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v24_hotfix.vdf"
-	!insertmacro GMF_Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v24_hotfix.mod"
-
-	end_of_test2:
-
-SectionEnd
-
-
-Section "Широкоформатный монитор" SecAdditional_4
-
-	SetOutPath "$INSTDIR\_work\data\Video"
-	File "Logo1.bik"
-
-	!insertmacro GMF_Delete "$INSTDIR\_work\data\Video\Logo2.bik"
-
-	SetOutPath "$INSTDIR\System"
-	!insertmacro _ReplaceInFile "Gothic.ini" "invMaxColumns=5" "invMaxColumns=6"
-
-	SetOutPath "$INSTDIR\Data"
-	File "Textures_Widescreen.vdf"
-
-	IfFileExists "$INSTDIR\Data\Textures_Russian.vdf" russian_found end_of_test3
-
-	russian_found:
-	File "Textures_Widescreen_Russian.vdf"
-
-	end_of_test3:
-
-SectionEnd
-
-
-Section /o "Совместимость с ноутбуками" SecAdditional_5
-	
-	SetOutPath "$INSTDIR\System"
-	!insertmacro _ReplaceInFile "Gothic.ini" "sightValue=9" "sightValue=4"
-	!insertmacro _ReplaceInFile "Gothic.ini" "zFogRadial=1" "zFogRadial=0"
-	!insertmacro _ReplaceInFile "Gothic.ini" "zDetailTexturesEnabled=1" "zDetailTexturesEnabled=0"
-	!insertmacro _ReplaceInFile "Gothic.ini" "zVobFarClipZScale=9" "zVobFarClipZScale=4"
-	!insertmacro _ReplaceInFile "Gothic.ini" "zFarClipAlphaFade=1" "zFarClipAlphaFade=0"
-	!insertmacro _ReplaceInFile "Gothic.ini" "zWaterAniEnabled=1" "zWaterAniEnabled=0"
-	!insertmacro _ReplaceInFile "Gothic.ini" "zCloudShadowScale=1" "zCloudShadowScale=0"
-	!insertmacro _ReplaceInFile "Gothic.ini" "NOAMBIENTPFX=0" "NOAMBIENTPFX=1"
-	!insertmacro _ReplaceInFile "Gothic.ini" "zAmbientPFXEnabled=1" "zAmbientPFXEnabled=0"
-	!insertmacro _ReplaceInFile "Gothic.ini" "zEnvMappingEnabled=1" "zEnvMappingEnabled=0"
-	!insertmacro _ReplaceInFile "Gothic.ini" "zWindEnabled=1" "zWindEnabled=0"
-	!insertmacro _ReplaceInFile "SystemPack.ini" "Disable_D3DVBCAPS_WRITEONLY=1" "Disable_D3DVBCAPS_WRITEONLY=0"
-	!insertmacro _ReplaceInFile "SystemPack.ini" "AnisotropicFiltering=16" "AnisotropicFiltering=0"
-
-SectionEnd
-
-
 ###################################
 ##     Описание компонентов      ##
 ###################################
 
-LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты Gothic 2 Steam Fix (SystemPack, Player Kit, патч 2.6)."
+LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты сборника (Union 1.0h, SystemPack 1.9, Player Kit, патч 2.6)."
 LangString DESC_Group1 ${LANG_RUSSIAN} "Выбор компонентов русификации игры."
-LangString DESC_SecAdditional_1 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русский текст и субтитры от Акеллы."
-LangString DESC_SecAdditional_2 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русскую озвучку и видео от Акеллы."
-LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Модификация, исправляющая многочисленные баги и недоработки. Требуется начало новой игры!"
-LangString DESC_SecAdditional_4 ${LANG_RUSSIAN} "Выберите эту опцию, если у вашего ПК широкоформатный монитор (16x9 или 16х10)."
-LangString DESC_SecAdditional_5 ${LANG_RUSSIAN} "Выберите эту опцию, если предполагается запуск игры на ноутбуке."
+LangString DESC_SecAdditional_1 ${LANG_RUSSIAN} "Использование 4 ГБ оперативной памяти вместо 2 ГБ. Только для 64-битных систем!"
+LangString DESC_SecAdditional_2 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русский текст и субтитры от Акеллы."
+LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русскую озвучку и видео от Акеллы."
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SecMain} $(DESC_SecMain)
@@ -331,8 +253,6 @@ LangString DESC_SecAdditional_5 ${LANG_RUSSIAN} "Выберите эту опцию, если предпо
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_1} $(DESC_SecAdditional_1)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_2} $(DESC_SecAdditional_2)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_3} $(DESC_SecAdditional_3)
-!insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_4} $(DESC_SecAdditional_4)
-!insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_5} $(DESC_SecAdditional_5)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ###################################
@@ -354,10 +274,6 @@ Function .onInit
 	StrCpy $DirectoryText "Нажмите кнопку 'Обзор ...' и укажите папку, в которой установлена Gothic II: Gold Edition. Как правило, это Steam\steamapps\common\Gothic II. \
 $\n$\nЗатем нажмите кнопку 'Далее' для продолжения."
 	InstallPathIsGood:
-	System::Call 'user32::GetSystemMetrics(i 0) i .r0'
-	System::Call 'user32::GetSystemMetrics(i 1) i .r1'
-	StrCpy $RESX $0
-	StrCpy $RESY $1
 FunctionEnd
 
 Function .onVerifyInstDir

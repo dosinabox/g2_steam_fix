@@ -1,4 +1,4 @@
 *.bik
 *.vdf
+*.mod
 res/*
-test_g2/*
