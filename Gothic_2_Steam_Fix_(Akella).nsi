@@ -197,6 +197,8 @@ Section "Текст и субтитры" SecAdditional_2
 	SetOutPath "$INSTDIR"
 	File "Changelog_G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}.txt"
 
+	CreateDirectory "$INSTDIR\Saves_G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}\current"
+
 SectionEnd
 
 
