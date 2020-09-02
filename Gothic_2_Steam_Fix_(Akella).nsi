@@ -22,7 +22,7 @@ var DirectoryText
 
 !define MOD_NAME "Gothic 2 Steam Fix"
 !define MOD_VERSION "09.2020"
-!define MOD_DETAILED_VERSION "20.9.1.0"
+!define MOD_DETAILED_VERSION "20.9.2.0"
 !define MOD_AUTHOR "D36"
 !define SCRIPTPATCH_VERSION "25"
 
@@ -117,7 +117,6 @@ Section "Основные патчи и обновления" SecMain
 
 	SetOutPath "$INSTDIR\Data"
 	File "Union.vdf"
-	File "zGamePad.vdf"
 
 	SetOutPath "$INSTDIR\System"
 	!insertmacro GMF_File_Rename "Gothic2.exe" "GothicStarter.exe"
