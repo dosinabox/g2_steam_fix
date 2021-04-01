@@ -20,8 +20,8 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "09.2020"
-!define MOD_DETAILED_VERSION "20.9.4.0"
+!define MOD_VERSION "04.2021"
+!define MOD_DETAILED_VERSION "21.4.1.0"
 !define MOD_AUTHOR "D36"
 
 Name "${MOD_NAME}"
@@ -43,8 +43,8 @@ VIAddVersionKey "ProductVersion" "${MOD_VERSION}"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "pic_int.bmp"
 
 Caption "${MOD_NAME}"
-!define MUI_TEXT_WELCOME_INFO_TITLE "$\t   $\n$\tGothic 2 Steam Fix"
-!define MUI_TEXT_WELCOME_INFO_TEXT "'Gothic 2 Steam Fix' is an all-in-one solution of the most known 'Gothic II: Gold Edition' problems on modern PCs. This pack includes official 2.6 patch, Union 1.0h, SystemPack 1.9 and Player Kit 2.8 and fully compatible with english, german, french, italian, spanish and polish versions of the game."
+!define MUI_TEXT_WELCOME_INFO_TITLE "$\t   $\n$\t${MOD_NAME}"
+!define MUI_TEXT_WELCOME_INFO_TEXT "'Gothic 2 Steam Fix' is an all-in-one solution of the most known 'Gothic II: Gold Edition' problems on modern PCs. This pack includes official 2.6 patch, Union 1.0j, SystemPack 1.9 and Player Kit 2.8 and fully compatible with english, german, french, italian, spanish and polish versions of the game."
 
 !define MUI_TEXT_DIRECTORY_SUBTITLE " "
 DirText $DirectoryText

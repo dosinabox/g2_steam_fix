@@ -63,12 +63,14 @@
 		AllocPage( 1, 0x10000 )		//ALPHA_VOB; ALPHA_WORLD_POLY
 		AllocPage( 2, 0x10000 )		//ALPHA_VOB; ALPHA_WORLD_POLY
 		AllocPage( 3, 0x20000 )		//ALPHA_VOB; ALPHA_WORLD_POLY
-		AllocPage( 4, 0x100 )		//FOV
+		AllocPage( 4, 0x100 )	    //FOV
+        AllocPage( 5, 0x100 )       //DS for sliding fix and etc
 		
 		OptionDef( BOOL		@UNION:GAME:SaveGameToANSI,								0)
 		OptionDef( BOOL		@UNION:GAME:SaveDATinASCII,								1)
 		OptionDef( BOOL		@UNION:DEBUG:ReadBinkWithVDFS,							true)
 		OptionDef( BOOL		@UNION:DEBUG:UseErrorVisuals,							false)
+		OptionDef( BOOL		@UNION:DEBUG:FixBink,									true)
 		OptionDef( BOOL		@Union:Core:CustomDebugWindowPos,						false)
 		OptionDef( BOOL		@Union:Core:DebugWindowPosX,							0)
 		OptionDef( BOOL		@Union:Core:DebugWindowPosY,							0)
@@ -85,6 +87,7 @@
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:SPAWN_REMOVERANGE,				5000)
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:SPAWN_INSERTTIME_MAX,			1000)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:RainVobCollision,				1)
+		OptionDef( FLOAT	@UNION:DEBUG:SlidingSize,							    0.05)
 	#/patch
 
 	#patch [Gothic.ini fixes]
@@ -345,6 +348,35 @@
 		INT length = 0x00421626 - begin
 		MemSet(begin, '90', length)
 	#/patch
+  
+    #patch [Sliding fix]
+      FLOAT @5x00000000 = FLOAT @UNION:DEBUG:SlidingSize
+      INT   @0x005B0326 = 5x00000000
+    #/patch
+
+	#patch [Fix 1px cutline in zCView objects]
+		HEX @0x00736D77 = '41'
+		HEX @0x00736DB3 = '42'
+		HEX @0x00736CF8 = '00'
+		HEX @0x00736D0B = '00'
+		HEX @0x005CC0F0 = '40'
+		HEX @0x005CC0F7 = '41'
+	#/patch
+
+	#patch [CastSpecificSpell - SetAsPlayer fix]
+		HEX @0x00489B87 = '90 90 90 90 90 90'
+		HEX @0x00489BCE = 'E9 A4 8A 38 00'
+		HEX @0x00812677 = 'E8 B4 C9 DF FF 8B 4D 34 E8 3C E8 EB FF 8B 4D 40 E8 84 1E EC FF E9 42 75 C7 FF'
+	#/patch
+
+	#patch [Fix double spawn for summons]
+		HEX @0x00706F15 = '90 90 90 90 90 90 90 90 90 90'
+	#/patch
+
+	#patch [GetSpellItem leak fix]
+		//HEX @0x0078C3B5 = '90 90 90'
+		HEX @0x0078C3CA = '90 90 90'
+	#/patch
 #/engine
 
 #engine [G1] GOTHIC I	GothicMOD.exe	1.08k (mod)
@@ -354,11 +386,13 @@
 		AllocPage( 3, 0x20000 )		//ALPHA_VOB; ALPHA_WORLD_POLY
 		AllocPage( 4, 0x100 )		//FOV; FPS; DrawDistanceMultiplier; zMouseRotationScale; BorderlessWindow; Interface scaling; TRADE_VALUE_MULTIPLIER; Inventory_Camera_Bugfix; ONE_BUTTON_CONTROL; Items_Insert_Bug; Hit_Check_Angle; GameVersion
 		AllocPage( 5, 0x100000 )	//s_posCacheList
+        AllocPage( 6, 0x100 )       //DS for sliding fix and etc
 		
 		OptionDef( BOOL		@UNION:GAME:SaveGameToANSI,								0)
 		OptionDef( BOOL		@UNION:GAME:SaveDATinASCII,								1)
 		OptionDef( BOOL		@UNION:DEBUG:ReadBinkWithVDFS,							true)
 		OptionDef( BOOL		@UNION:DEBUG:UseErrorVisuals,							false)
+		OptionDef( BOOL		@UNION:DEBUG:FixBink,									true)
 		OptionDef( BOOL		@Union:Core:CustomDebugWindowPos,						false)
 		OptionDef( BOOL		@Union:Core:DebugWindowPosX,							0)
 		OptionDef( BOOL		@Union:Core:DebugWindowPosY,							0)
@@ -403,7 +437,7 @@
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:Animated_Inventory,				1)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:HideFocus,						1)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:ThrowFlag,						1)
-		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:InteractionCollision,			0)
+		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:InteractionCollision,			1)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:RainVobCollision,				1)
 		OptionDef( BOOL		@SYSTEMPACK:BARRIER:AlwaysON,							0)
 		OptionDef( BOOL		@SYSTEMPACK:BARRIER:AlwaysOFF,							0)
@@ -439,6 +473,7 @@
 		OptionDef( FLOAT	@SYSTEMPACK:SUBTITLES:TimeMultiplier,					2.0)
 		OptionDef( FLOAT	@SYSTEMPACK:SUBTITLES:MaxTimePerPhrase,					30.0)
 		OptionDef( FLOAT	@SYSTEMPACK:SUBTITLES:TimePerChar,						100.0)
+		OptionDef( FLOAT	@UNION:DEBUG:SlidingSize,							    0.05)
 	#/patch
 
 	#patch [Load Steam Overlay]
@@ -451,6 +486,13 @@
 				LoadLibrary (Concat(hSteamDirectory, "/GameOverlayRenderer.dll.tmp"))
 			END
 		END
+	#/patch
+	
+	#patch [CodeCave - 1]
+		HEX @0x007396FE = 'E9 D0 02 00 00'
+		INT begin = 0x00739703
+		INT length = 0x007399D3 - begin
+		MemSet(begin, '90', length)
 	#/patch
 	
 	#patch [PerceptionCheck - crash fix]
@@ -1084,6 +1126,9 @@
 			HEX @0x007378A2 = 'D8 1D A4 08 7D 00 DF E0 F6 C4 40 0F 85 A0 B7 F3 FF 80 BF 38 01 00 00 40 74 4D 80 BF 39 01 00 00 02 74 5A 80 BF 38 01 00 00 02 0F 84 63 00 00 00 80 BF 38 01 00 00 04 0F 84 6C 00 00 00 68 00 00 00 40 68 00 00 80 3F 68 00 00 F0 42 68 00 00 00 00 8D 4C E4 2C E8 24 13 CD FF 50 8B CF E8 FC 67 EB FF E9 4A B7 F3 FF 68 00 00 00 C0 68 00 00 F0 42 68 00 00 0C 42 68 00 00 00 00 EB D4 68 00 00 00 40 68 00 00 96 42 68 00 00 70 41 68 00 00 00 00 EB BE 68 00 00 00 C0 68 00 00 00 00 68 00 00 00 00 68 00 00 80 3F EB A8 68 00 00 00 C0 68 00 00 00 00 68 00 00 00 00 68 00 00 80 3F EB 92 81 BF BC 00 00 00 00 00 80 3F 74 0E 81 7F 64 00 00 80 3F 74 05 E9 27 FF FF FF 6A 01 8B CF E8 DC AB F3 FF 83 87 BC 00 00 00 01 83 47 64 01 E9 BF B6 F3 FF'
 			HEX @0x007378DF = 'E9 F9 00 00 00'
 			HEX @0x007379DD = '80 BF 39 01 00 00 12 0F 84 35 FF FF FF 68 00 00 00 40 E9 F0 FE FF FF'
+			
+			HEX @0x0073981D = 'D9 44 E4 08 D8 0D 90 26 7D 00 D8 0D EC F1 8C 00 D9 5C E4 08 E9 CA 48 EB FF'
+			HEX @0x007378FF = 'E8 19 1F 00 00'
 		END
 	#/patch
 	
@@ -1290,9 +1335,10 @@
 		HEX @0x004C7C64 = '31 C0 31 C0'
 	#/patch
 
-	#patch [FindNextFightAction_Workaround]
+	#patch [FindNextFightAction_Workaround_1]
 		HEX @0x00748FCB = 'E9 30 04 FF FF'
-		HEX @0x00739400 = '83 3F 04 0F 85 88 FC 00 00 C7 07 06 00 00 00 E9 7D FC 00 00'
+		//HEX @0x00739400 = '83 3F 04 0F 85 88 FC 00 00 C7 07 06 00 00 00 E9 7D FC 00 00'
+		HEX @0x00739400 = '83 3F 04 0F 85 88 FC 00 00 80 BE A6 07 00 00 20 74 0B C7 07 06 00 00 00 E9 74 FC 00 00 C7 07 08 00 00 00 E9 69 FC 00 00'
 	#/patch
 
 	#patch [Text Color]
@@ -1470,6 +1516,8 @@
 	#patch [MobInterCollision]	
 		IF BOOL @SYSTEMPACK:PARAMETERS:InteractionCollision
 			HEX @0x0067FCEF = 'EB 10 90 90 90 90'
+			HEX @0x00740B3C = '6A 00 E8 0D 45 F0 FF 8B CF E9 76 5A F6 FF'
+			HEX @0x0067FCEA = 'E8 4D 0E 0C 00'
 		END
     #/patch
 	
@@ -1605,6 +1653,60 @@
 		INT length = 0x0041F36A - begin
 		MemSet(begin, '90', length)
 	#/patch
+  
+    #patch [Sliding fix]
+      FLOAT @6x00000000 = FLOAT @UNION:DEBUG:SlidingSize
+      INT   @0x0059459C = 6x00000000
+    #/patch
+
+	#patch [Fix 1px cutline in zCView objects]
+		HEX @0x006FC9B7 = '41'
+		HEX @0x006FC9F3 = '42'
+		HEX @0x006FC938 = '00'
+		HEX @0x006FC94B = '00'
+		HEX @0x005AF1EA = '42'
+		HEX @0x005AF1F6 = '41'
+	#/patch
+
+	#patch [CastSpecificSpell - SetAsPlayer fix]
+		HEX @0x0047F0A2 = '90 90 90 90 90 90'
+		HEX @0x0047F0E7 = 'E9 99 19 2C 00'
+		HEX @0x00740A85 = 'E8 D6 DC EA FF 8B 4E 34 E8 4E E0 F5 FF 8B 4E 40 E8 86 12 F6 FF E9 4D E6 D3 FF'
+	#/patch
+	
+	#patch [CheckInsertNpc - NPC spawn fix]
+		HEX @0x006CFDE0 = 'E9 46 0D 07 00 90'
+		HEX @0x00740B2B = '89 0D 56 34 12 00 64 A1 00 00 00 00 E9 AA F2 F8 FF'
+		HEX @0x006D01E9 = 'E9 B1 08 07 00'
+		HEX @0x00740A9F = '83 C4 74 56 57 8B 3D 56 34 12 00 33 F6 39 77 08 7E 49 8B 07 8B 0C B0 85 C9 74 40 F3 0F 10 41 10 0F 57 C9 0F 2F C8 72 20 8D 41 04 50 FF 31 8B CF E8 29 00 00 00 85 C0 74 1C 8B 07 8B CF FF 34 B0 E8 30 00 00 00 4E EB 0D F3 0F 5C 05 B0 0F 85 00 F3 0F 11 41 10 46 3B 77 08 7C B7 5F 5E C3 55 8B EC 51 89 4D FC 8B E5 5D B8 50 02 6D 00 FF E0 8B E5 5D C2 08 00 55 8B EC 51 89 4D FC 8B E5 5D B8 70 F7 6C 00 FF E0 8B E5 5D C2 04 00'
+		HEX @0x00740B2D	= 6x00000010
+		HEX @0x00740AA6	= 6x00000010
+	#/patch
+
+	#patch [Fix double spawn for summons]
+		HEX @0x006D0425 = '90 90 90 90 90 90 90 90 90 90'
+	#/patch
+
+	#patch [GetSpellItem leak fix]
+		//HEX @0x0074AEC6 = '90 90 90'
+		HEX @0x0074AEDB = '90 90 90'
+	#/patch
+
+	#patch [Spawn anim fix]
+		HEX @0x00739703 = '55 8B EC 83 EC 20 89 4D FC 68 D0 C3 84 00 8D 4D E0 E8 87 7C CC FF 8D 45 E0 50 8B 4D FC E8 DB BB F5 FF 8B C8 E8 24 55 D4 FF 89 45 F4 8D 4D E0 E8 29 7B CC FF 8B 4D F4 51 8B 4D FC E8 BD BB F5 FF 8B C8 E8 96 3A D3 FF 89 45 F8 83 7D F8 00 74 1B 8B 55 F8 52 8B 4D FC E8 A1 BB F5 FF 8B C8 E8 BA 3A D3 FF 85 C0 74 04 33 C0 EB 12 8B 4D FC 83 C4 20 5D 53 56 8B 74 24 0C E9 86 50 01 00 8B E5 5D C2 04 00'
+		HEX @0x0074E800 = 'E9 FE AE FE FF 90'
+	#/patch
+
+	#patch [CopyDamage to arrow/bolt]
+		HEX @0x006A4487 = 'E9 FA 52 09 00 90'
+		HEX @0x00739786 = '81 C4 FC 00 00 00 55 50 8B EC 83 EC 2C 56 C7 45 00 00 00 00 00 83 BB 08 02 00 00 06 75 27 68 44 E0 84 00 8D 75 E8 89 F1 E8 ED 7B CC FF 8D 55 E8 52 89 D9 E8 32 5D F5 FF 89 45 00 8D 4D E8 E8 97 7A CC FF EB 2E 83 BB 08 02 00 00 05 75 41 68 48 24 83 00 8D 75 D4 89 F1 E8 BD 7B CC FF 8D 55 D4 52 89 D9 E8 02 5D F5 FF 89 45 00 8D 4D D4 E8 67 7A CC FF 89 D9 E8 F0 AB F5 FF 89 45 FC 83 7D FC 00 74 0C 8B 45 00 50 8B 4D FC E8 DB 84 F3 FF 5E 8B E5 58 5D C2 04 00'
+	#/patch
+
+	#patch [Disable portal in the swamp]
+		HEX @0x00521086 = 'E9 B5 87 21 00'
+		HEX @0x0051C9B6 = 'E9 B4 CE 21 00'
+		HEX @0x00739836 = '8D 4C 24 78 51 E9 4B 78 DE FF 8B 4D 08 81 39 50 53 55 30 75 EB 8D 4C 24 78 51 C7 44 E4 34 45 3E 10 4E C7 44 E4 28 85 D8 0C 4E E9 36 78 DE FF 8D 4C 24 5C 51 E9 4C 31 DE FF 8B 4E 18 8B 49 18 81 79 04 53 55 30 31 75 E7 81 39 50 3A 5F 50 75 DF 8D 4C 24 5C 51 C7 44 E4 2C 45 3E 10 4E C7 44 E4 24 85 D8 0C 4E E9 2B 31 DE FF'
+	#/patch
 #/engine
 
 #engine [G2] GOTHIC II Classic	Gothic2.exe	1.30 (fix)	
@@ -1616,11 +1718,13 @@
 		AllocPage( 4, 0x100 )		//FOV; DrawDistanceMultiplier; Interface scaling
 		AllocPage( 5, 0x100000 )	//s_posCacheList
 		AllocPage( 6, 0x1000 )		//Polish
+        AllocPage( 7, 0x100 )       //DS for sliding fix and etc
 		
 		OptionDef( BOOL		@UNION:GAME:SaveGameToANSI,								0)
 		OptionDef( BOOL		@UNION:GAME:SaveDATinASCII,								1)
 		OptionDef( BOOL		@UNION:DEBUG:ReadBinkWithVDFS,							true)
 		OptionDef( BOOL		@UNION:DEBUG:UseErrorVisuals,							false)
+		OptionDef( BOOL		@UNION:DEBUG:FixBink,									true)
 		OptionDef( BOOL		@Union:Core:CustomDebugWindowPos,						false)
 		OptionDef( BOOL		@Union:Core:DebugWindowPosX,							0)
 		OptionDef( BOOL		@Union:Core:DebugWindowPosY,							0)
@@ -1650,7 +1754,7 @@
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:OutDoorPortalDistanceMultiplier,	1)
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:InDoorPortalDistanceMultiplier,	1)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:HideFocus,						1)
-		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:InteractionCollision,			0)
+		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:InteractionCollision,			1)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:RainVobCollision,				1)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:AbortMenuSound,					1)
 		OptionDef( FLOAT	@SYSTEMPACK:INTERFACE:Scale,							1)
@@ -1671,6 +1775,7 @@
 		OptionDef( INT		@SYSTEMPACK:INTERFACE:Color_Talk_NPC,					-256)
 		OptionDef( BOOL		@SYSTEMPACK:INTERFACE:Hide_STR_DEX,						1)
 		OptionDef( FLOAT	@SYSTEMPACK:SUBTITLES:TimeMultiplier,					1.0)
+		OptionDef( FLOAT	@UNION:DEBUG:SlidingSize,								0.05)
 	#/patch
 	
 	#patch [PerceptionCheck - crash fix]
@@ -2334,6 +2439,8 @@
 	#patch [MobInterCollision]	
 		IF BOOL @SYSTEMPACK:PARAMETERS:InteractionCollision
 			HEX @0x006C353F = 'EB 10 90 90 90 90'
+			HEX @0x006C353A = 'E8 91 1E 0C 00'
+			HEX @0x007853D0 = '6A 00 E8 A9 DE EE FF 8B CF E9 52 6A F6 FF'
 		END
     #/patch
 	
@@ -2442,21 +2549,57 @@
 		INT length = 0x0041F76A - begin
 		MemSet(begin, '90', length)
 	#/patch
+  
+    #patch [Sliding fix]
+      FLOAT @7x00000000 = FLOAT @UNION:DEBUG:SlidingSize
+      INT   @0x005AFD7C = 7x00000000
+    #/patch
+
+	#patch [Fix 1px cutline in zCView objects]
+		HEX @0x007469D6 = '41'
+		HEX @0x00746A12 = '42'
+		HEX @0x00746957 = '00'
+		HEX @0x0074696A = '00'
+		HEX @0x005CD8EA = '42'
+		HEX @0x005CD8F6 = '41'
+	#/patch
+
+	#patch [CastSpecificSpell - SetAsPlayer fix]
+		HEX @0x0048554A = '90 90 90 90 90 90'
+		HEX @0x0048558F = 'E9 22 FE 2F 00'
+		HEX @0x007853B6 = 'E8 E5 F1 E8 FF 8B 4E 34 E8 CD E8 F5 FF 8B 4E 40 E8 B5 1B F6 FF E9 C4 01 D0 FF'
+	#/patch
+
+	#patch [Fix double spawn for summons]
+		HEX @0x00719235 = '90 90 90 90 90 90 90 90 90 90'
+	#/patch
+
+	#patch [GetSpellItem leak fix]
+		//HEX @0x00796DD7 = '90 90 90'
+		HEX @0x00796DEA = '90 90 90'
+	#/patch
+	
+	#patch [CopyDamage to arrow/bolt]
+		HEX @0x007853DE = '55 50 8B EC 83 EC 2C 56 C7 45 00 00 00 00 00 83 BB 3C 02 00 00 06 75 27 68 14 4D 89 00 8D 75 E8 89 F1 E8 BB BC C7 FF 8D 55 E8 52 89 D9 E8 D0 E6 F4 FF 89 45 00 8D 4D E8 E8 45 BD C7 FF EB 2E 83 BB 3C 02 00 00 05 75 41 68 BC 7F 88 00 8D 75 D4 89 F1 E8 8B BC C7 FF 8D 55 D4 52 89 D9 E8 A0 E6 F4 FF 89 45 00 8D 4D D4 E8 15 BD C7 FF 89 D9 E8 0E 3C F5 FF 89 45 FC 83 7D FC 00 74 0C 8B 45 00 50 8B 4D FC E8 C9 F1 F2 FF 5E 8B E5 58 5D C2 04 00'
+		HEX @0x006E9D26 = 'E9 B3 B6 09 00'
+	#/patch
 #/engine
 
 #engine [G2A] GOTHIC II NOTR		Gothic2.exe 2.6 (fix)
 	
 	#patch [GLOBAL DATA] Данные в этом блоке не удаляются из памяти.
-		AllocPage( 1, 0x10000 ) //ALPHA_VOB; ALPHA_WORLD_POLY
-		AllocPage( 2, 0x30000 ) //ALPHA_VOB; ALPHA_WORLD_POLY
-		AllocPage( 3, 0x10000 ) //ALPHA_VOB; ALPHA_WORLD_POLY
-		AllocPage( 4, 0x100 )	//FOV; DrawDistanceMultiplier; RMB_No_Take_Anim; Interface scaling
-		AllocPage( 5, 0x100000 )	//s_posCacheList
+		AllocPage( 1, 0x10000 )  //ALPHA_VOB; ALPHA_WORLD_POLY
+		AllocPage( 2, 0x30000 )  //ALPHA_VOB; ALPHA_WORLD_POLY
+		AllocPage( 3, 0x10000 )  //ALPHA_VOB; ALPHA_WORLD_POLY
+		AllocPage( 4, 0x100 )	 //FOV; DrawDistanceMultiplier; RMB_No_Take_Anim; Interface scaling
+		AllocPage( 5, 0x100000 ) //s_posCacheList
+        AllocPage( 7, 0x100 )    //DS for sliding fix and etc
 		
 		OptionDef( BOOL		@UNION:GAME:SaveGameToANSI,								0)
 		OptionDef( BOOL		@UNION:GAME:SaveDATinASCII,								1)
 		OptionDef( BOOL		@UNION:DEBUG:ReadBinkWithVDFS,							true)
 		OptionDef( BOOL		@UNION:DEBUG:UseErrorVisuals,							false)
+		OptionDef( BOOL		@UNION:DEBUG:FixBink,									true)
 		OptionDef( BOOL		@Union:Core:CustomDebugWindowPos,						false)
 		OptionDef( BOOL		@Union:Core:DebugWindowPosX,							0)
 		OptionDef( BOOL		@Union:Core:DebugWindowPosY,							0)
@@ -2487,10 +2630,11 @@
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:OutDoorPortalDistanceMultiplier,	1)
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:InDoorPortalDistanceMultiplier,	1)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:EnableShields,					1)
+		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:UnlockParadeJumpB,				1)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:No_Take_Anim,					0)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:RMB_No_Take_Anim,				0)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:HideFocus,						1)
-		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:InteractionCollision,			0)
+		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:InteractionCollision,			1)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:ShowArmor,						0)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:RainVobCollision,				1)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:AbortMenuSound,					1)
@@ -2499,6 +2643,9 @@
 		OptionDef( BOOL		@SYSTEMPACK:INTERFACE:ForceMenuScale,					0)
 		OptionDef( INT		@SYSTEMPACK:INTERFACE:ScaleMenusX,						640)
 		OptionDef( INT		@SYSTEMPACK:INTERFACE:ScaleMenusY,						480)
+		OptionDef( BOOL		@SYSTEMPACK:INTERFACE:ForceDocScale,					0)
+		OptionDef( INT		@SYSTEMPACK:INTERFACE:ScaleDocX,						8192)
+		OptionDef( INT		@SYSTEMPACK:INTERFACE:ScaleDocY,						8192)
 		OptionDef( INT		@SYSTEMPACK:INTERFACE:DialogBoxX,						800)
 		OptionDef( INT		@SYSTEMPACK:INTERFACE:DialogBoxY,						600)
 		OptionDef( INT		@SYSTEMPACK:INTERFACE:SubtitlesBoxX,					600)
@@ -2519,6 +2666,7 @@
 		OptionDef( FLOAT	@SYSTEMPACK:SUBTITLES:TimeMultiplier,					2.0)
 		OptionDef( FLOAT	@SYSTEMPACK:SUBTITLES:MaxTimePerPhrase,					30.0)
 		OptionDef( FLOAT	@SYSTEMPACK:SUBTITLES:TimePerChar,						100.0)
+		OptionDef( FLOAT	@UNION:DEBUG:SlidingSize,							0.05)
 	#/patch
 
   
@@ -2540,6 +2688,13 @@
 				END
 			END
 		END
+	#/patch
+	
+	#patch [CodeCave - 1]
+		HEX @0x0066E8AE = 'E9 FF 01 00 00'
+		INT begin = 0x0066E8B3
+		INT length = 0x0066EAB2 - begin
+		MemSet(begin, '90', length)
 	#/patch
 	
 	#patch [PerceptionCheck - crash fix]
@@ -3007,6 +3162,18 @@
 			HEX @0x007087C1 = 'E8 82 87 0C 00 A3 54 0F AB 00 8B 07 6A 46 8B CF FF 50 04 89 44 24 10 DB 44 24 10 D8 4C 24 0C E8 63 87 0C 00 A3 50 0F AB 00 8B 17 6A 46 8B CF FF 12 89 44 24 10 DB 44 24 10 D8 4C 24 08 E8 45 87 0C 00 A3 A8 0F AB 00 8B 07 6A 46 8B CF FF 50 04 89 44 24 10 DB 44 24 10 D8 4C 24 0C E8 26 87 0C 00'
 			HEX @0x0070783E = '90 90'
 		END
+
+		IF BOOL @SYSTEMPACK:INTERFACE:ForceDOCScale
+		HEX @0x006671C8 = 'EB'
+		
+		HEX @4x00000050 = INT @SYSTEMPACK:INTERFACE:ScaleDocX
+		HEX @4x00000054 = INT @SYSTEMPACK:INTERFACE:ScaleDocY
+		
+		HEX @0x0068D02C	= 4x00000050
+		HEX @0x0068D025	= 4x00000054
+		END
+		
+		
 	#/patch
 
 	#patch [DialogBoxX]
@@ -3202,7 +3369,15 @@
 	#patch [MobInterCollision]	
 		IF BOOL @SYSTEMPACK:PARAMETERS:InteractionCollision
 			HEX @0x007215CF = 'EB 10 90 90 90 90'
+			
+			HEX @0x007215CA = 'E8 36 D1 F4 FF'
+			HEX @0x0066E705 = '6A 00 E8 F4 18 06 00 8B CF E9 ED C3 0D 00'
+			
+			//AllocPage(20, 0x100)
+			//HEX @0x007215CA = CALL(0x007215CA, 20x00000000)
+			//HEX @20x00000000 = '6A 00' + CALL(20x00000002, 0x006D0000) + '8B CF' + JMP(20x00000009, 0x0074AB00)
 		END
+		
     #/patch	
 	
 	#patch [Rain particle collisions]
@@ -3332,6 +3507,82 @@
 		INT begin = 0x0041F890
 		INT length = 0x0041FAB5 - begin
 		MemSet(begin, '90', length)
+	#/patch
+  
+    #patch [Sliding fix]
+      FLOAT @7x00000000 = FLOAT @UNION:DEBUG:SlidingSize
+      INT   @0x005B58EC = 7x00000000
+    #/patch
+
+	#patch [Fix 1px cutline in zCView objects]
+		HEX @0x007A64D6 = '41'
+		HEX @0x007A6512 = '42'
+		HEX @0x007A6457 = '00'
+		HEX @0x007A646A = '00'
+		HEX @0x005D449A = '42'
+		HEX @0x005D44A6 = '41'
+	#/patch
+
+	#patch [CastSpecificSpell - SetAsPlayer fix]
+		HEX @0x00486B6A = '90 90 90 90 90 90'
+		HEX @0x00486BAF = 'E9 37 7B 1E 00'
+		HEX @0x0066E6EB = 'E8 90 D5 FA FF 8B 4E 34 E8 A8 3F 0D 00 8B 4E 40 E8 20 73 0D 00 E9 AF 84 E1 FF'
+	#/patch
+
+	#patch [Disable inventory limit]
+		INT @INV_MAX_ITEMS = 0x0083C474
+		INV_MAX_ITEMS = 0x7FFFFFFF
+
+		INT @0x00704DEB = INV_MAX_ITEMS
+		INT @0x00704DF4 = INV_MAX_ITEMS
+		INT @0x00706901 = INV_MAX_ITEMS
+		INT @0x0070690A = INV_MAX_ITEMS
+		INT @0x007078A1 = INV_MAX_ITEMS
+		INT @0x007078AA = INV_MAX_ITEMS
+		INT @0x0070F502 = INV_MAX_ITEMS
+		INT @0x0070F5E9 = INV_MAX_ITEMS
+	#/patch
+
+    #patch [Stop Focus Talk]
+        INT GetTalkingWith = 0x006BCF60
+        INT GetFocusNpc = 0x00732BF0
+        INT Delta = GetFocusNpc - GetTalkingWith
+        
+        INT CallA = 0x0042A8BD + 1
+        INT CallB = 0x0042A97A + 1
+        INT CallC = 0x0042A99C + 1
+        INT CallD = 0x0042A9C3 + 1
+        
+        INT @CallA += Delta
+        INT @CallB += Delta
+        INT @CallC += Delta
+        INT @CallD += Delta
+    #/patch
+
+	#patch [Fix double spawn for summons]
+		HEX @0x00778AF5 = '90 90 90 90 90 90 90 90 90 90'
+	#/patch
+
+	#patch [GetSpellItem leak fix]
+		//HEX @0x006802B7 = '90 90 90'
+		HEX @0x006802CA = '90 90 90'
+	#/patch
+	
+	#patch [Spawn anim fix]
+		HEX @0x0066E713 = '55 8B EC 83 EC 20 89 4D FC 68 FC 5D 8B 00 8D 4D E0 E8 97 29 D9 FF 8D 45 E0 50 8B 4D FC E8 EB 9F 0C 00 8B C8 E8 34 39 FA FF 89 45 F4 8D 4D E0 E8 19 2A D9 FF 8B 4D F4 51 8B 4D FC E8 CD 9F 0C 00 8B C8 E8 F6 47 E0 FF 89 45 F8 83 7D F8 00 74 1B 8B 55 F8 52 8B 4D FC E8 B1 9F 0C 00 8B C8 E8 1A 48 E0 FF 85 C0 74 04 33 C0 EB 12 8B 4D FC 83 C4 20 5D 53 56 8B 74 24 0C E9 56 55 01 00 8B E5 5D C2 04 00'
+		HEX @0x00683CE0 = 'E9 2E AA FE FF 90'
+	#/patch
+
+	#patch [PARADEJUMPB when GAME_ACTION not pressed]
+		IF BOOL @SYSTEMPACK:PARAMETERS:UnlockParadeJumpB
+			HEX @0x007524A6 = 'E9 EB C2 F1 FF'
+			HEX @0x0066E796 = '8B 4C E4 1C 3B 0D 84 26 AB 00 75 1E 83 3D C0 21 8B 00 00 74 15 8B 0D 50 16 8D 00 8B 11 6A 05 FF 52 04 3C 01 0F 85 5E 40 0E 00 E8 D3 47 16 00 E9 E1 3C 0E 00'
+		END
+	#/patch
+
+	#patch [CopyDamage to arrow/bolt]
+		HEX @0x0066E8B3 = '55 50 8B EC 83 EC 2C 56 C7 45 00 00 00 00 00 83 BB 50 02 00 00 06 75 27 68 FC 2E 8A 00 8D 75 E8 89 F1 E8 E6 27 D9 FF 8D 55 E8 52 89 D9 E8 AB 36 0C 00 89 45 00 8D 4D E8 E8 70 28 D9 FF EB 2E 83 BB 50 02 00 00 05 75 41 68 AC 60 89 00 8D 75 D4 89 F1 E8 B6 27 D9 FF 8D 55 D4 52 89 D9 E8 7B 36 0C 00 89 45 00 8D 4D D4 E8 40 28 D9 FF 89 D9 E8 79 8E 0C 00 89 45 FC 83 7D FC 00 74 0C 8B 45 00 50 8B 4D FC E8 24 3A 0A 00 5E 8B E5 58 5D C2 04 00'
+		HEX @0x00748808 = 'E9 A6 60 F2 FF'
 	#/patch
 #/engine
 

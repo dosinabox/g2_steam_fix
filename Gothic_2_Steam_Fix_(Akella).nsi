@@ -21,10 +21,10 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "09.2020"
-!define MOD_DETAILED_VERSION "20.9.18.0"
+!define MOD_VERSION "04.2021"
+!define MOD_DETAILED_VERSION "21.4.1.0"
 !define MOD_AUTHOR "D36"
-!define SCRIPTPATCH_VERSION "25"
+!define SCRIPTPATCH_VERSION "26"
 
 Name "${MOD_NAME}"
 OutFile "Gothic_2_Steam_Fix_RU_Akella_${MOD_VERSION}.exe"
@@ -61,8 +61,7 @@ DirText $DirectoryText
 !define MUI_TEXT_INSTALLING_SUBTITLE " "
 
 !define MUI_TEXT_FINISH_INFO_TITLE "$\t   $\n$\tУстановка завершена!"
-!define MUI_TEXT_FINISH_INFO_TEXT "Теперь игру можно запустить из Steam. Установка дополнительных обновлений или патчей не требуется и не рекомендуется.\
-$\n$\nПриятной игры!"
+!define MUI_TEXT_FINISH_INFO_TEXT "Теперь игру можно запустить из Steam. Установка дополнительных обновлений или патчей не требуется и не рекомендуется.$\n$\nПриятной игры!"
 
 BrandingText " "
 
@@ -110,6 +109,7 @@ Section "Основные патчи и обновления" SecMain
 	SetOutPath "$INSTDIR\_work\data\Music\NewWorld"
 	File "Xardas Tower.sty"
 	File "XT_DayStd.sgt"
+	File "KAS_Loop_DayStd.sgt"
 
 	SetOutPath "$INSTDIR\_work\data\Video"
 	File "Extro_PAL.bik"
@@ -117,7 +117,6 @@ Section "Основные патчи и обновления" SecMain
 
 	SetOutPath "$INSTDIR\Data"
 	File "Union.vdf"
-	File "zGamePad.vdf"
 
 	SetOutPath "$INSTDIR\System"
 	!insertmacro GMF_File_Rename "Gothic2.exe" "GothicStarter.exe"
@@ -167,9 +166,17 @@ Section /o "Расширение доступной памяти" SecAdditional_1
 SectionEnd
 
 
+Section /o "Поддержка геймпада" SecAdditional_2
+
+	SetOutPath "$INSTDIR\Data"
+	File "zGamePad.vdf"
+
+SectionEnd
+
+
 SectionGroup /e "Русификация от Акеллы" Group1
 
-Section "Текст и субтитры" SecAdditional_2
+Section "Текст и субтитры" SecAdditional_3
 
 	Delete "$INSTDIR\Data\Textures_multilingual_Jowood.vdf"
 	Delete "$INSTDIR\Data\Textures_Addon_Menu_English.vdf"
@@ -203,7 +210,7 @@ Section "Текст и субтитры" SecAdditional_2
 SectionEnd
 
 
-Section "Озвучка и видео" SecAdditional_3
+Section "Озвучка и видео" SecAdditional_4
 	
 	Delete "$INSTDIR\Data\Speech_Addon_Patch.vdf"
 	Delete "$INSTDIR\Data\Speech_English_Patch_Atari.vdf"
@@ -243,11 +250,12 @@ SectionGroupEnd
 ##     Описание компонентов      ##
 ###################################
 
-LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты сборника (Union 1.0h, SystemPack 1.9, Player Kit, патч 2.6)."
+LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты сборника (Union 1.0j, SystemPack 1.9, Player Kit 2.8, патч 2.6)."
 LangString DESC_Group1 ${LANG_RUSSIAN} "Выбор компонентов русификации игры."
 LangString DESC_SecAdditional_1 ${LANG_RUSSIAN} "Использование 4 ГБ оперативной памяти вместо 2 ГБ. Только для 64-битных систем!"
-LangString DESC_SecAdditional_2 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русский текст и субтитры от Акеллы."
-LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русскую озвучку и видео от Акеллы."
+LangString DESC_SecAdditional_2 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите играть на геймпаде."
+LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русский текст и субтитры от Акеллы."
+LangString DESC_SecAdditional_4 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русскую озвучку и видео от Акеллы."
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SecMain} $(DESC_SecMain)
@@ -255,6 +263,7 @@ LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_1} $(DESC_SecAdditional_1)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_2} $(DESC_SecAdditional_2)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_3} $(DESC_SecAdditional_3)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_4} $(DESC_SecAdditional_4)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ###################################
@@ -273,8 +282,7 @@ Function .onInit
 	InstallPathIsFound:
 	IfFileExists "$INSTDIR\System\Gothic2.exe" InstallPathIsGood
 	StrCpy $INSTDIR "$PROGRAMFILES\Steam\steamapps\common\Gothic II"
-	StrCpy $DirectoryText "Нажмите кнопку 'Обзор ...' и укажите папку, в которой установлена Gothic II: Gold Edition. Как правило, это Steam\steamapps\common\Gothic II. \
-$\n$\nЗатем нажмите кнопку 'Далее' для продолжения."
+	StrCpy $DirectoryText "Нажмите кнопку 'Обзор ...' и укажите папку, в которой установлена Gothic II: Gold Edition. Как правило, это Steam\steamapps\common\Gothic II.$\n$\nЗатем нажмите кнопку 'Далее' для продолжения."
 	InstallPathIsGood:
 FunctionEnd
 
