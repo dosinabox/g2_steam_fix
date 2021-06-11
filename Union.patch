@@ -81,7 +81,7 @@
 		OptionDef( BOOL		@SYSTEMPACK:DEBUG:Disable_D3DVBCAPS_WRITEONLY,			1)
 		OptionDef( BOOL		@SYSTEMPACK:DEBUG:NumLockDisable,						1)
 		OptionDef( INT		@SYSTEMPACK:DEBUG:LineCacheSize,						16384)
-		OptionDef( INT		@SYSTEMPACK:PARAMETERS:AnisotropicFiltering,			16)
+		OptionDef( INT		@SYSTEMPACK:PARAMETERS:AnisotropicFiltering,			0)
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:VerticalFOV,						67.5)
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:SPAWN_INSERTRANGE,				4500)
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:SPAWN_REMOVERANGE,				5000)
@@ -377,10 +377,26 @@
 		//HEX @0x0078C3B5 = '90 90 90'
 		HEX @0x0078C3CA = '90 90 90'
 	#/patch
+
+	#patch [zCView::PrintCY fix]
+		HEX @0x0073A9FB = '90'
+		HEX @0x0073A9FC = Call(0x0073A9FC, 0x00718810)
+	#/patch
 #/engine
 
 #engine [G1] GOTHIC I	GothicMOD.exe	1.08k (mod)
 	#patch [GLOBAL DATA] Данные в этом блоке не удаляются из памяти.
+        INT Lang_Other = 0
+        INT Lang_Rus = 1
+        INT Lang_Eng = 2
+        INT Lang_Ger = 3
+        INT Lang_Pol = 4
+        INT Lang_Rou = 5
+        INT Lang_Ita = 6
+        INT Lang_Cze = 7
+        INT Lang_Esp = 8
+        INT Language = GetLanguage()
+        
 		AllocPage( 1, 0x10000 )		//ALPHA_VOB; ALPHA_WORLD_POLY
 		AllocPage( 2, 0x10000 )		//ALPHA_VOB; ALPHA_WORLD_POLY
 		AllocPage( 3, 0x20000 )		//ALPHA_VOB; ALPHA_WORLD_POLY
@@ -418,7 +434,7 @@
 		OptionDef( INT		@SYSTEMPACK:DEBUG:LineCacheSize,						16384)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:Gothic2_Control,					0)
 		OptionDef( INT		@SYSTEMPACK:PARAMETERS:FPS_Limit,						0)
-		OptionDef( INT		@SYSTEMPACK:PARAMETERS:AnisotropicFiltering,			16)
+		OptionDef( INT		@SYSTEMPACK:PARAMETERS:AnisotropicFiltering,			0)
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:VerticalFOV,						67.5)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:NewFOVformula,					0)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:DisableLOD,						0)
@@ -451,6 +467,9 @@
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:Fight_ANI_Interrupt,				0)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:Monsters_Block_Damage,			0)
 		OptionDef( FLOAT	@SYSTEMPACK:INTERFACE:Scale,							1)
+		OptionDef( BOOL		@SYSTEMPACK:INTERFACE:ForceMenuScale,					0)
+		OptionDef( INT		@SYSTEMPACK:INTERFACE:ScaleMenusX,						640)
+		OptionDef( INT		@SYSTEMPACK:INTERFACE:ScaleMenusY,						480)
 		OptionDef( INT		@SYSTEMPACK:INTERFACE:DialogBoxX,						640)
 		OptionDef( INT		@SYSTEMPACK:INTERFACE:DialogBoxY,						480)
 		OptionDef( INT		@SYSTEMPACK:INTERFACE:SubtitlesBoxX,					600)
@@ -899,10 +918,6 @@
 		HEX @0x0063816E = INT @SYSTEMPACK:INTERFACE:SaveGameImageSizeY
 	#/patch
 
-	#patch [InventoryItemNoteSizeX]
-		HEX @0x006672DA = INT @SYSTEMPACK:INTERFACE:InventoryItemNoteSizeX
-	#/patch
-
 	#patch [InventoryCellSize]
 		IF INT @SYSTEMPACK:INTERFACE:InventoryCellSize != 70
 			HEX @0x0066818C = 'E9 41 79 16 00 90'
@@ -954,7 +969,7 @@
 	#/patch
 
 	#patch [Interface scaling]
-		IF FLOAT @SYSTEMPACK:INTERFACE:Scale !=0
+		IF FLOAT @SYSTEMPACK:INTERFACE:Scale >= 1.0
 			HEX @Scale = 4x0000001C
 			Scale = LIM (1.0,FLOAT @SYSTEMPACK:INTERFACE:Scale,9999)
 			HEX @0x006E107C = 'E9 21 78 EC FF'
@@ -1048,12 +1063,26 @@
 			HEX @0x007376AF = 4x0000001C
 			HEX @0x007376C5 = 4x0000001C
 			HEX @0x00728ADE = 'E9 C2 EB 00 00 FF 12 8B 0D BC E1 8D 00 8B F8 8B 01 E9 C7 EB 00 00'
+			FLOAT @0x007D2B14 = FLOAT @SYSTEMPACK:INTERFACE:ScaleMenusX
+			FLOAT @0x007D2B18 = FLOAT @SYSTEMPACK:INTERFACE:ScaleMenusY
 		END
 		IF FLOAT @SYSTEMPACK:INTERFACE:Scale == 1
 			HEX @0x005A892A = 'EB 0C'
 			HEX @0x005A8919 = 'DA 35 76 E3 42 00'
 			HEX @0x005A8A5E = '81 7C E4 0C 00 03 00 00 0F 8D A9 FE FF FF D9 E8 E9 C5 FE FF FF'
 			HEX @0x0071FE32 = 'E9 27 8C E8 FF'
+		END
+		IF BOOL @SYSTEMPACK:INTERFACE:ForceMenuScale
+			HEX @0x004CF351 = '74 00'
+		END
+	#/patch
+
+	#patch [InventoryItemNoteSizeX]
+		IF FLOAT @SYSTEMPACK:INTERFACE:Scale < 1.0
+		HEX @0x006672DA = INT @SYSTEMPACK:INTERFACE:InventoryItemNoteSizeX
+		END
+		IF FLOAT @SYSTEMPACK:INTERFACE:Scale >= 1.0
+		HEX @0x005A8A29 = INT @SYSTEMPACK:INTERFACE:InventoryItemNoteSizeX
 		END
 	#/patch
 
@@ -1337,8 +1366,8 @@
 
 	#patch [FindNextFightAction_Workaround_1]
 		HEX @0x00748FCB = 'E9 30 04 FF FF'
-		//HEX @0x00739400 = '83 3F 04 0F 85 88 FC 00 00 C7 07 06 00 00 00 E9 7D FC 00 00'
-		HEX @0x00739400 = '83 3F 04 0F 85 88 FC 00 00 80 BE A6 07 00 00 20 74 0B C7 07 06 00 00 00 E9 74 FC 00 00 C7 07 08 00 00 00 E9 69 FC 00 00'
+		HEX @0x00739400 = '83 3F 04 0F 85 88 FC 00 00 80 BE A6 07 00 00 20 74 39 C7 07 06 00 00 00 E9 74 FC 00 00 C7 07 08 00 00 00 E9 69 FC 00 00'
+		HEX @0x0073944B = '80 BE 08 02 00 00 01 74 C9 EB BC'
 	#/patch
 
 	#patch [Text Color]
@@ -1389,7 +1418,7 @@
 	#patch [EV_Parade_fix]
 		HEX @0x006AC956 = 'E9 AA 00 00 00 90'
 	#/patch
-
+    
 	#patch [Hit_Check_Angle]
 		HEX @0x0074010C = '8B 86 2C 01 00 00 D9 40 48 D9 1D 24 FD 9D 00 D9 40 58 D9 1D 28 FD 9D 00 D9 40 68 D9 1D 2C FD 9D 00 68 20 FD 9D 00 68 30 FD 9D 00 68 24 FD 9D 00 89 E9 E8 BD BB 00 00 D9 05 30 FD 9D 00 E8 0A 74 03 00 99 33 C2 2B C2 83 F8 5A 0F 8F B2 77 EE FF D9 83 A8 01 00 00 E9 51 77 EE FF'
 		HEX @0x006278B2 = 'E9 55 88 11 00 90'
@@ -1707,6 +1736,20 @@
 		HEX @0x0051C9B6 = 'E9 B4 CE 21 00'
 		HEX @0x00739836 = '8D 4C 24 78 51 E9 4B 78 DE FF 8B 4D 08 81 39 50 53 55 30 75 EB 8D 4C 24 78 51 C7 44 E4 34 45 3E 10 4E C7 44 E4 28 85 D8 0C 4E E9 36 78 DE FF 8D 4C 24 5C 51 E9 4C 31 DE FF 8B 4E 18 8B 49 18 81 79 04 53 55 30 31 75 E7 81 39 50 3A 5F 50 75 DF 8D 4C 24 5C 51 C7 44 E4 2C 45 3E 10 4E C7 44 E4 24 85 D8 0C 4E E9 2B 31 DE FF'
 	#/patch
+
+	#patch [zCView::PrintCY fix]
+		HEX @0x007003D4 = '90'
+		HEX @0x007003D5 = Call(0x007003D5, 0x006E0200)
+	#/patch
+	
+	#patch [Transform crashfix]
+		HEX @0x0062787D = 'E8 35 20 11 00'
+		HEX @0x007398B7 = '8B 81 B4 09 00 00 85 C0 74 01 C3 C7 81 84 01 00 00 00 00 00 00 8B 0D B0 BB 8D 00 89 8E C4 01 00 00 8B 81 B4 09 00 00 C3'
+	#/patch
+    
+    #patch [Regen mana without hp]
+        INT @0x0069E453 += 4
+    #/patch
 #/engine
 
 #engine [G2] GOTHIC II Classic	Gothic2.exe	1.30 (fix)	
@@ -1741,7 +1784,7 @@
 		OptionDef( INT		@SYSTEMPACK:DEBUG:Cache_Timeout,						400)
 		OptionDef( INT		@SYSTEMPACK:DEBUG:LineCacheSize,						16384)
 		OptionDef( BOOL		@SYSTEMPACK:DEBUG:Polish_version,						0)
-		OptionDef( INT		@SYSTEMPACK:PARAMETERS:AnisotropicFiltering,			16)
+		OptionDef( INT		@SYSTEMPACK:PARAMETERS:AnisotropicFiltering,			0)
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:VerticalFOV,						67.5)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:NewFOVformula,					0)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:DisableLOD,						0)
@@ -2081,7 +2124,7 @@
 	#/patch
 
 	#patch [Interface scaling]
-		IF FLOAT @SYSTEMPACK:INTERFACE:Scale !=0
+		IF FLOAT @SYSTEMPACK:INTERFACE:Scale >= 1.0
 			HEX @Scale = 4x00000014
 			Scale = LIM (1.0,FLOAT @SYSTEMPACK:INTERFACE:Scale,9999)
 			HEX @0x0077DE60 = 'E9 10 03 00 00 DB 44 E4 0C DA 35 21 57 40 00 D8 15 00 00 F1 02 DF E0 F6 C4 41 7F 0C DD D8 68 1D 9A 81 00 E9 9F DE FE FF D9 1D 00 00 F1 02 EB EE'
@@ -2583,18 +2626,34 @@
 		HEX @0x007853DE = '55 50 8B EC 83 EC 2C 56 C7 45 00 00 00 00 00 83 BB 3C 02 00 00 06 75 27 68 14 4D 89 00 8D 75 E8 89 F1 E8 BB BC C7 FF 8D 55 E8 52 89 D9 E8 D0 E6 F4 FF 89 45 00 8D 4D E8 E8 45 BD C7 FF EB 2E 83 BB 3C 02 00 00 05 75 41 68 BC 7F 88 00 8D 75 D4 89 F1 E8 8B BC C7 FF 8D 55 D4 52 89 D9 E8 A0 E6 F4 FF 89 45 00 8D 4D D4 E8 15 BD C7 FF 89 D9 E8 0E 3C F5 FF 89 45 FC 83 7D FC 00 74 0C 8B 45 00 50 8B 4D FC E8 C9 F1 F2 FF 5E 8B E5 58 5D C2 04 00'
 		HEX @0x006E9D26 = 'E9 B3 B6 09 00'
 	#/patch
+
+	#patch [zCView::PrintCY fix]
+		HEX @0x0074A4A4 = '90'
+		HEX @0x0074A4A5 = Call(0x0074A4A5, 0x00729AA0)
+	#/patch
 #/engine
 
 #engine [G2A] GOTHIC II NOTR		Gothic2.exe 2.6 (fix)
 	
 	#patch [GLOBAL DATA] Данные в этом блоке не удаляются из памяти.
+        INT Lang_Other = 0
+        INT Lang_Rus = 1
+        INT Lang_Eng = 2
+        INT Lang_Ger = 3
+        INT Lang_Pol = 4
+        INT Lang_Rou = 5
+        INT Lang_Ita = 6
+        INT Lang_Cze = 7
+        INT Lang_Esp = 8
+        INT Language = GetLanguage()
+		
 		AllocPage( 1, 0x10000 )  //ALPHA_VOB; ALPHA_WORLD_POLY
 		AllocPage( 2, 0x30000 )  //ALPHA_VOB; ALPHA_WORLD_POLY
 		AllocPage( 3, 0x10000 )  //ALPHA_VOB; ALPHA_WORLD_POLY
 		AllocPage( 4, 0x100 )	 //FOV; DrawDistanceMultiplier; RMB_No_Take_Anim; Interface scaling
 		AllocPage( 5, 0x100000 ) //s_posCacheList
         AllocPage( 7, 0x100 )    //DS for sliding fix and etc
-		
+        
 		OptionDef( BOOL		@UNION:GAME:SaveGameToANSI,								0)
 		OptionDef( BOOL		@UNION:GAME:SaveDATinASCII,								1)
 		OptionDef( BOOL		@UNION:DEBUG:ReadBinkWithVDFS,							true)
@@ -2612,12 +2671,12 @@
 		OptionDef( INT		@SYSTEMPACK:DEBUG:WindowPosY,							0)
 		OptionDef( BOOL		@SYSTEMPACK:DEBUG:ZNORESTHREAD, 						1)
 		OptionDef( BOOL		@SYSTEMPACK:DEBUG:BUGFIX_already_deleted_zCObject,		1)
-		OptionDef( BOOL		@SYSTEMPACK:DEBUG:Polish_version,						0)
+		OptionDef( BOOL		@SYSTEMPACK:DEBUG:Polish_version,						Language == Lang_Pol)
 		OptionDef( BOOL		@SYSTEMPACK:DEBUG:StrafeBug,							0)
 		OptionDef( BOOL		@SYSTEMPACK:DEBUG:Show_FPS_Counter,						0)
 		OptionDef( INT		@SYSTEMPACK:DEBUG:Cache_Timeout,						400)
 		OptionDef( INT		@SYSTEMPACK:DEBUG:LineCacheSize,						16384)
-		OptionDef( INT		@SYSTEMPACK:PARAMETERS:AnisotropicFiltering,			16)
+		OptionDef( INT		@SYSTEMPACK:PARAMETERS:AnisotropicFiltering,			0)
 		OptionDef( FLOAT	@SYSTEMPACK:PARAMETERS:VerticalFOV,						67.5)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:NewFOVformula,					0)
 		OptionDef( BOOL		@SYSTEMPACK:PARAMETERS:DisableLOD,						0)
@@ -2732,6 +2791,12 @@
 		
 		IF BOOL @GAME:INTERNAL:gameAbnormalExit == 1
 			BOOL @GAME:INTERNAL:gameAbnormalExit = 0
+		END
+        
+		IF Language == Lang_Ger
+			HEX @GAME:GAME:keyboardLayout == "00000407"
+        ELSE
+			HEX @GAME:GAME:keyboardLayout == "00020409"
 		END
 	#/patch
 
@@ -3082,7 +3147,7 @@
 	#/patch
 	
 	#patch [Interface scaling]
-		IF FLOAT @SYSTEMPACK:INTERFACE:Scale !=0
+		IF FLOAT @SYSTEMPACK:INTERFACE:Scale >= 1.0
 			HEX @Scale = 4x00000014
 			Scale = LIM (1.0,FLOAT @SYSTEMPACK:INTERFACE:Scale,9999)
 			HEX @0x006670E0 = 'E9 10 03 00 00 DB 44 E4 0C DA 35 21 57 40 00 D8 15 00 00 B9 07 DF E0 F6 C4 41 7F 0C DD D8 68 6D 0D 81 00 E9 4F 17 FF FF D9 1D 00 00 B9 07 EB EE'
@@ -3373,9 +3438,10 @@
 			HEX @0x007215CA = 'E8 36 D1 F4 FF'
 			HEX @0x0066E705 = '6A 00 E8 F4 18 06 00 8B CF E9 ED C3 0D 00'
 			
-			//AllocPage(20, 0x100)
-			//HEX @0x007215CA = CALL(0x007215CA, 20x00000000)
-			//HEX @20x00000000 = '6A 00' + CALL(20x00000002, 0x006D0000) + '8B CF' + JMP(20x00000009, 0x0074AB00)
+			HEX @0x0071E378 = '90 90 90 90 90'
+			HEX @0x0071E381 = '90 90 90 90 90'
+			HEX @0x0071E414 = '90 90 90 90 90'
+			HEX @0x0071E420 = '90 90 90 90 90'
 		END
 		
     #/patch	
@@ -3543,6 +3609,7 @@
 		INT @0x0070F5E9 = INV_MAX_ITEMS
 	#/patch
 
+    /*
     #patch [Stop Focus Talk]
         INT GetTalkingWith = 0x006BCF60
         INT GetFocusNpc = 0x00732BF0
@@ -3558,6 +3625,7 @@
         INT @CallC += Delta
         INT @CallD += Delta
     #/patch
+    */
 
 	#patch [Fix double spawn for summons]
 		HEX @0x00778AF5 = '90 90 90 90 90 90 90 90 90 90'
@@ -3584,6 +3652,24 @@
 		HEX @0x0066E8B3 = '55 50 8B EC 83 EC 2C 56 C7 45 00 00 00 00 00 83 BB 50 02 00 00 06 75 27 68 FC 2E 8A 00 8D 75 E8 89 F1 E8 E6 27 D9 FF 8D 55 E8 52 89 D9 E8 AB 36 0C 00 89 45 00 8D 4D E8 E8 70 28 D9 FF EB 2E 83 BB 50 02 00 00 05 75 41 68 AC 60 89 00 8D 75 D4 89 F1 E8 B6 27 D9 FF 8D 55 D4 52 89 D9 E8 7B 36 0C 00 89 45 00 8D 4D D4 E8 40 28 D9 FF 89 D9 E8 79 8E 0C 00 89 45 FC 83 7D FC 00 74 0C 8B 45 00 50 8B 4D FC E8 24 3A 0A 00 5E 8B E5 58 5D C2 04 00'
 		HEX @0x00748808 = 'E9 A6 60 F2 FF'
 	#/patch
+
+	#patch [zCView::PrintCY fix]
+		HEX @0x007A9FA4 = '90'
+		HEX @0x007A9FA5 = Call(0x007A9FA5, 0x007894E0)
+	#/patch
+
+	#patch [skip EV_AIMAT]
+		HEX @0x007530F0 = 'EB 79'
+	#/patch
+
+	#patch [zFILE_VDFS::Open unsigned]
+		HEX @0x0044925F = 'E9 E0 56 22 00 90 0F 85 FF 00 00 00'
+		HEX @0x0066E944 = '83 BE FC 29 00 00 FF E9 15 A9 DD FF'
+	#/patch
+    
+    #patch [Regen mana without hp]
+        INT @0x00742053 += 4
+    #/patch
 #/engine
 
 #engine [0xB1B45718] Spacer_2

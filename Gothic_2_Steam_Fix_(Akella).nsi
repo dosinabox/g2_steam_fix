@@ -21,8 +21,8 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "04.2021"
-!define MOD_DETAILED_VERSION "21.4.1.0"
+!define MOD_VERSION "06.2021"
+!define MOD_DETAILED_VERSION "21.6.11.0"
 !define MOD_AUTHOR "D36"
 !define SCRIPTPATCH_VERSION "26"
 
@@ -102,6 +102,10 @@ Section "Основные патчи и обновления" SecMain
 
 	CreateDirectory "$INSTDIR\Data\ModVDF"
 	CreateDirectory "$INSTDIR\Saves\current"
+
+	SetOutPath "$INSTDIR"
+	File "vcredist_2010_x86.exe"
+	Exec "vcredist_2010_x86.exe /q /norestart"
 
 	SetOutPath "$INSTDIR"
 	File "Union.url"
@@ -250,7 +254,7 @@ SectionGroupEnd
 ##     Описание компонентов      ##
 ###################################
 
-LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты сборника (Union 1.0j, SystemPack 1.9, Player Kit 2.8, патч 2.6)."
+LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты сборника (Union 1.0k, SystemPack 1.9, Player Kit 2.8, патч 2.6)."
 LangString DESC_Group1 ${LANG_RUSSIAN} "Выбор компонентов русификации игры."
 LangString DESC_SecAdditional_1 ${LANG_RUSSIAN} "Использование 4 ГБ оперативной памяти вместо 2 ГБ. Только для 64-битных систем!"
 LangString DESC_SecAdditional_2 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите играть на геймпаде."
