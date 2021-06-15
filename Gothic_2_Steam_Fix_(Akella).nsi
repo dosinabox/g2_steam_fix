@@ -22,7 +22,7 @@ var DirectoryText
 
 !define MOD_NAME "Gothic 2 Steam Fix"
 !define MOD_VERSION "06.2021"
-!define MOD_DETAILED_VERSION "21.6.11.0"
+!define MOD_DETAILED_VERSION "21.6.15.0"
 !define MOD_AUTHOR "D36"
 !define SCRIPTPATCH_VERSION "26"
 
