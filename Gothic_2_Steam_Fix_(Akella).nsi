@@ -172,7 +172,7 @@ SectionEnd
 
 Section /o "Поддержка геймпада" SecAdditional_2
 
-	SetOutPath "$INSTDIR\Data"
+	SetOutPath "$INSTDIR\Data\Plugins"
 	File "zGamePad.vdf"
 
 SectionEnd
