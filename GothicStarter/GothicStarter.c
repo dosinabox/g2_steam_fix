@@ -1148,10 +1148,7 @@ void StartSelectedMod(HWND hDlg)
 			else
 #endif
 			{
-				if (g_IsGothic1)
-	                lstrcat(cmnd, TEXT("GothicMod.exe"));
-				else
-					lstrcat(cmnd, TEXT("Gothic2.exe"));
+				lstrcat(cmnd, TEXT("GothicMod.exe"));
 			}
 			strcatx(cmnd, TEXT("\" "), TEXT("-game:"), info->base, TEXT(".ini"), NULL);
 #ifdef MOD_VERSION
