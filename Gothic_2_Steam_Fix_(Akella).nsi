@@ -21,8 +21,8 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "11.2021"
-!define MOD_DETAILED_VERSION "21.11.1.0"
+!define MOD_VERSION "12.2021"
+!define MOD_DETAILED_VERSION "21.12.19.0"
 !define MOD_AUTHOR "D36"
 !define SCRIPTPATCH_VERSION "27"
 
@@ -89,19 +89,9 @@ Section "Основные патчи и обновления" SecMain
 	SectionIn RO
 
 	Delete "$INSTDIR\VDFS.dmp"
-	Delete "$INSTDIR\System\ddraw.dll"
 	Delete "$INSTDIR\System\dinput.dll"
-	Delete "$INSTDIR\Data\g2a_nr_basepatch.vdf"
-	Delete "$INSTDIR\Data\g2a_nr_scriptpatch.vdf"
-	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.vdf"
-	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.vdf"
-	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v23_hotfix.vdf"
-	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v24_hotfix.vdf"
 	Delete "$INSTDIR\Data\SystemPack.vdf"
 	Delete "$INSTDIR\_work\data\Video\Logo2.bik"
-
-	CreateDirectory "$INSTDIR\Data\ModVDF"
-	CreateDirectory "$INSTDIR\Saves\current"
 
 	SetOutPath "$INSTDIR"
 	File "vcredist_2010_x86.exe"
@@ -110,25 +100,18 @@ Section "Основные патчи и обновления" SecMain
 	SetOutPath "$INSTDIR"
 	File "Union.url"
 
-	SetOutPath "$INSTDIR\_work\data\Music\NewWorld"
-	File "Xardas Tower.sty"
-	File "XT_DayStd.sgt"
-	File "KAS_Loop_DayStd.sgt"
-
 	SetOutPath "$INSTDIR\_work\data\Video"
-	File "Extro_PAL.bik"
 	File "Logo1.bik"
 
 	SetOutPath "$INSTDIR\Data"
 	File "Union.vdf"
 
 	SetOutPath "$INSTDIR\System"
-	!insertmacro GMF_File_Rename "Gothic2.exe" "GothicStarter.exe"
+	Rename $INSTDIR\system\Gothic2.exe $INSTDIR\system\GothicMod.exe
 	File "Gothic.ini"
 	File "Gothic2.exe"
 	File "GothicGame.ini"
 	File "GothicGame.rtf"
-	File "GothicMod.exe"
 	File "Shw32.dll"
 	File "SystemPack.ini"
 	File "Union.patch"
@@ -137,40 +120,10 @@ Section "Основные патчи и обновления" SecMain
 	SetOutPath "$INSTDIR\System\autorun"
 	File "AutoScreenRes.dll"
 
-	IfFileExists "$INSTDIR\Manuel\G2_Short_Manual_FRa.pdf" end_of_tests french_not_found
-	french_not_found:
-
-	IfFileExists "$INSTDIR\system\gothic2nk.ico" end_of_tests polish_not_found
-	polish_not_found:
-
-	IfFileExists "$INSTDIR\Gothic2_Handbuch_GE.pdf" end_of_tests german_not_found
-	german_not_found:
-
-	IfFileExists "$INSTDIR\Manuale\G2AddOn_HB_ITA.pdf" fix_subtitles italian_not_found
-	italian_not_found:
-
-	IfFileExists "$INSTDIR\G2_Gold_Manual_ESP.pdf" fix_subtitles spanish_not_found
-	spanish_not_found:
-
-	IfFileExists "$INSTDIR\Data\Speech_English_Patch_Atari.vdf" fix_subtitles end_of_tests
-
-	fix_subtitles:
-	Rename $INSTDIR\_work\data\scripts\content\cutscene\ou.dat $INSTDIR\_work\data\scripts\content\cutscene\ou.bin
-
-	end_of_tests:
-
 SectionEnd
 
 
-Section /o "Расширение доступной памяти" SecAdditional_1
-
-	SetOutPath "$INSTDIR\System"
-	!insertmacro GMF_File_Rename "GothicMod_4gb.exe" "GothicMod.exe"
-
-SectionEnd
-
-
-Section /o "Поддержка геймпада" SecAdditional_2
+Section /o "Поддержка геймпада" SecAdditional_1
 
 	SetOutPath "$INSTDIR\Data\Plugins"
 	File "zGamePad.vdf"
@@ -180,7 +133,7 @@ SectionEnd
 
 SectionGroup /e "Русификация от Акеллы" Group1
 
-Section "Текст и субтитры" SecAdditional_3
+Section "Текст и субтитры" SecAdditional_2
 
 	Delete "$INSTDIR\Data\Textures_multilingual_Jowood.vdf"
 	Delete "$INSTDIR\Data\Textures_Addon_Menu_English.vdf"
@@ -193,6 +146,9 @@ Section "Текст и субтитры" SecAdditional_3
 
 	SetOutPath "$INSTDIR\_work\data\scripts\content\cutscene"
 	File "OU.BIN"
+
+	SetOutPath "$INSTDIR\_work\data\Music\NewWorld"
+	File "KAS_Loop_DayStd.sgt"
 
 	SetOutPath "$INSTDIR\System"
 	File "G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}.ini"
@@ -214,7 +170,7 @@ Section "Текст и субтитры" SecAdditional_3
 SectionEnd
 
 
-Section "Озвучка и видео" SecAdditional_4
+Section "Озвучка и видео" SecAdditional_3
 	
 	Delete "$INSTDIR\Data\Speech_Addon_Patch.vdf"
 	Delete "$INSTDIR\Data\Speech_English_Patch_Atari.vdf"
@@ -254,12 +210,11 @@ SectionGroupEnd
 ##     Описание компонентов      ##
 ###################################
 
-LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты сборника (Union 1.0l, Player Kit 2.8, патч 2.6)."
+LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты сборника (Union 1.0l, vcredist, стартер модов)."
 LangString DESC_Group1 ${LANG_RUSSIAN} "Выбор компонентов русификации игры."
-LangString DESC_SecAdditional_1 ${LANG_RUSSIAN} "Использование 4 ГБ оперативной памяти вместо 2 ГБ. Только для 64-битных систем!"
-LangString DESC_SecAdditional_2 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите играть на геймпаде."
-LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русский текст и субтитры от Акеллы."
-LangString DESC_SecAdditional_4 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русскую озвучку и видео от Акеллы."
+LangString DESC_SecAdditional_1 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите играть на геймпаде."
+LangString DESC_SecAdditional_2 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русский текст и субтитры от Акеллы."
+LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите установить русскую озвучку и видео от Акеллы."
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SecMain} $(DESC_SecMain)
@@ -267,7 +222,6 @@ LangString DESC_SecAdditional_4 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_1} $(DESC_SecAdditional_1)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_2} $(DESC_SecAdditional_2)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_3} $(DESC_SecAdditional_3)
-!insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_4} $(DESC_SecAdditional_4)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ###################################

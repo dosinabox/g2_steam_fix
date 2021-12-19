@@ -20,8 +20,8 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "11.2021"
-!define MOD_DETAILED_VERSION "21.11.1.0"
+!define MOD_VERSION "12.2021"
+!define MOD_DETAILED_VERSION "21.12.19.0"
 !define MOD_AUTHOR "D36"
 
 Name "${MOD_NAME}"
@@ -80,73 +80,30 @@ Section "Main" SecMain
 	SectionIn RO
 
 	Delete "$INSTDIR\VDFS.dmp"
-	Delete "$INSTDIR\System\ddraw.dll"
 	Delete "$INSTDIR\System\dinput.dll"
-	Delete "$INSTDIR\Data\g2a_nr_scriptpatch.vdf"
-	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v21_hotfix.vdf"
-	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v22_hotfix.vdf"
-	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v23_hotfix.vdf"
-	Delete "$INSTDIR\Data\g2a_nr_scriptpatch_v24_hotfix.vdf"
 	Delete "$INSTDIR\Data\SystemPack.vdf"
 	Delete "$INSTDIR\_work\data\Video\Logo1.bik"
 	Delete "$INSTDIR\_work\data\Video\Logo2.bik"
 
-	CreateDirectory "$INSTDIR\Data\ModVDF"
-	CreateDirectory "$INSTDIR\Saves\current"
-
 	SetOutPath "$INSTDIR"
 	File "vcredist_2010_x86.exe"
 	Exec "vcredist_2010_x86.exe /q /norestart"
-
-	SetOutPath "$INSTDIR\_work\data\Music\NewWorld"
-	File "Xardas Tower.sty"
-	File "XT_DayStd.sgt"
 
 	SetOutPath "$INSTDIR\Data"
 	File "Textures_Widescreen.vdf"
 	File "Union.vdf"
 
 	SetOutPath "$INSTDIR\System"
-	!insertmacro GMF_File_Rename "Gothic2.exe" "GothicStarter.exe"
+	Rename $INSTDIR\system\Gothic2.exe $INSTDIR\system\GothicMod.exe
 	File "Gothic.ini"
 	File "Gothic2.exe"
-	File "GothicMod.exe"
 	File "Shw32.dll"
 	File "Union.patch"
 	File "vdfs32g.dll"
 	!insertmacro GMF_File_Rename "SystemPack_int.ini" "SystemPack.ini"
-	!insertmacro GMF_File_Rename "GothicGame_original.ini" "GothicGame.ini"
-	!insertmacro GMF_File_Rename "GothicGame_original.rtf" "GothicGame.rtf"
 
 	SetOutPath "$INSTDIR\System\autorun"
 	File "AutoScreenRes.dll"
-
-	IfFileExists "$INSTDIR\Manuel\G2_Short_Manual_FRa.pdf" fix_title french_not_found
-	french_not_found:
-
-	IfFileExists "$INSTDIR\Manuale\G2AddOn_HB_ITA.pdf" fix_subtitles italian_not_found
-	italian_not_found:
-
-	IfFileExists "$INSTDIR\Gothic2_Handbuch_GE.pdf" end_of_tests german_not_found
-	german_not_found:
-
-	IfFileExists "$INSTDIR\system\gothic2nk.ico" end_of_tests polish_not_found
-	polish_not_found:
-
-	IfFileExists "$INSTDIR\G2_Gold_Manual_ESP.pdf" fix_subtitles spanish_not_found
-	spanish_not_found:
-
-	IfFileExists "$INSTDIR\Data\Speech_English_Patch_Atari.vdf" fix_subtitles end_of_tests
-
-	fix_subtitles:
-	Rename $INSTDIR\_work\data\scripts\content\cutscene\ou.dat $INSTDIR\_work\data\scripts\content\cutscene\ou.bin
-	goto fix_title
-
-	fix_title:
-	SetOutPath "$INSTDIR\Data"
-	File "Textures_Addon_Menu_English.vdf"
-
-	end_of_tests:
 
 SectionEnd
 
