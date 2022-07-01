@@ -20,8 +20,8 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "12.2021"
-!define MOD_DETAILED_VERSION "21.12.19.0"
+!define MOD_VERSION "07.2022"
+!define MOD_DETAILED_VERSION "22.7.1.0"
 !define MOD_AUTHOR "D36"
 
 Name "${MOD_NAME}"
@@ -44,7 +44,7 @@ VIAddVersionKey "ProductVersion" "${MOD_VERSION}"
 
 Caption "${MOD_NAME}"
 !define MUI_TEXT_WELCOME_INFO_TITLE "$\t   $\n$\t${MOD_NAME}"
-!define MUI_TEXT_WELCOME_INFO_TEXT "'Gothic 2 Steam Fix' is an all-in-one solution of the most known 'Gothic II: Gold Edition' problems on modern PCs. This pack includes official 2.6 patch, Union 1.0l and Player Kit 2.8 and fully compatible with english, german, french, italian, spanish and polish versions of the game."
+!define MUI_TEXT_WELCOME_INFO_TEXT "'Gothic 2 Steam Fix' is an all-in-one solution of the most known 'Gothic II: Gold Edition' problems on modern PCs. This pack includes official 2.6 patch, Union 1.0m and Player Kit 2.8 and fully compatible with english, german, french, italian, spanish and polish versions of the game."
 
 !define MUI_TEXT_DIRECTORY_SUBTITLE " "
 DirText $DirectoryText
@@ -85,18 +85,19 @@ Section "Main" SecMain
 	Delete "$INSTDIR\_work\data\Video\Logo1.bik"
 	Delete "$INSTDIR\_work\data\Video\Logo2.bik"
 
-	SetOutPath "$INSTDIR"
-	File "vcredist_2010_x86.exe"
-	Exec "vcredist_2010_x86.exe /q /norestart"
-
 	SetOutPath "$INSTDIR\Data"
 	File "Textures_Widescreen.vdf"
 	File "Union.vdf"
+
+	SetOutPath "$INSTDIR\launcher"
+	File "d3d11.dll"
 
 	SetOutPath "$INSTDIR\System"
 	Rename $INSTDIR\system\Gothic2.exe $INSTDIR\system\GothicMod.exe
 	File "Gothic.ini"
 	File "Gothic2.exe"
+	File "msvcp100.dll"
+	File "msvcr100.dll"
 	File "Shw32.dll"
 	File "Union.patch"
 	File "vdfs32g.dll"

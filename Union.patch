@@ -25,31 +25,35 @@
     #/patch
     
     #patch [Reset spacer window]
-        INT impRegOpenKeyExA   = ImportSymbol("Advapi32.dll", "RegOpenKeyExA")
-        INT impRegDeleteValueA = ImportSymbol("Advapi32.dll", "RegDeleteValueA")
-        INT impRegCloseKey     = ImportSymbol("Advapi32.dll", "RegCloseKey")
-        INT key                = 0
-        HEX registryPath       = "SOFTWARE\\PIRANHA-BYTES Software GmbH\\Spacer\\Settings\\\0"
-        HEX registryValue      = "winMain\0"
-        #assembler [ResetSpacerWindow]
-            lea     eax, dword ptr [$key]
-            push    eax                     ; key
-            push    2                       ; access
-            push    0                       ; flags
-            push    $registryPath           ; path
-            push    0x80000001              ; key
-            call    $impRegOpenKeyExA
-            cmp     eax, 0
-            jnz     return
-            push    $registryValue
-            push    dword ptr [$key]
-            call    $impRegDeleteValueA
-            push    dword ptr [$key]
-            call    $impRegCloseKey
-        return:
-            ret
-        #/assembler
-        ResetSpacerWindow()
+        OptionDef(BOOL @SYSTEMPACK:DEBUG:ResetSpacerWindow, false)
+        IF BOOL @SYSTEMPACK:DEBUG:ResetSpacerWindow != False
+            BOOL @SYSTEMPACK:DEBUG:ResetSpacerWindow = False
+            INT impRegOpenKeyExA   = ImportSymbol("Advapi32.dll", "RegOpenKeyExA")
+            INT impRegDeleteValueA = ImportSymbol("Advapi32.dll", "RegDeleteValueA")
+            INT impRegCloseKey     = ImportSymbol("Advapi32.dll", "RegCloseKey")
+            INT key                = 0
+            HEX registryPath       = "SOFTWARE\\PIRANHA-BYTES Software GmbH\\Spacer\\Settings\\\0"
+            HEX registryValue      = "winMain\0"
+            #assembler [ResetSpacerWindow]
+                lea     eax, dword ptr [$key]
+                push    eax                     ; key
+                push    2                       ; access
+                push    0                       ; flags
+                push    $registryPath           ; path
+                push    0x80000001              ; key
+                call    $impRegOpenKeyExA
+                cmp     eax, 0
+                jnz     return
+                push    $registryValue
+                push    dword ptr [$key]
+                call    $impRegDeleteValueA
+                push    dword ptr [$key]
+                call    $impRegCloseKey
+            return:
+                ret
+            #/assembler
+            ResetSpacerWindow()
+        END
     #/patch
 #/engine
 
@@ -80,31 +84,35 @@
     #/patch
     
     #patch [Reset spacer window]
-        INT impRegOpenKeyExA   = ImportSymbol("Advapi32.dll", "RegOpenKeyExA")
-        INT impRegDeleteValueA = ImportSymbol("Advapi32.dll", "RegDeleteValueA")
-        INT impRegCloseKey     = ImportSymbol("Advapi32.dll", "RegCloseKey")
-        INT key                = 0
-        HEX registryPath       = "SOFTWARE\\Piranha Bytes\\Spacer\\Settings\\\0"
-        HEX registryValue      = "winMain\0"
-        #assembler [ResetSpacerWindow]
-            lea     eax, dword ptr [$key]
-            push    eax                     ; key
-            push    2                       ; access
-            push    0                       ; flags
-            push    $registryPath           ; path
-            push    0x80000001              ; key
-            call    $impRegOpenKeyExA
-            cmp     eax, 0
-            jnz     return
-            push    $registryValue
-            push    dword ptr [$key]
-            call    $impRegDeleteValueA
-            push    dword ptr [$key]
-            call    $impRegCloseKey
-        return:
-            ret
-        #/assembler
-        ResetSpacerWindow()
+        OptionDef(BOOL @SYSTEMPACK:DEBUG:ResetSpacerWindow, false)
+        IF BOOL @SYSTEMPACK:DEBUG:ResetSpacerWindow != False
+            BOOL @SYSTEMPACK:DEBUG:ResetSpacerWindow = False
+            INT impRegOpenKeyExA   = ImportSymbol("Advapi32.dll", "RegOpenKeyExA")
+            INT impRegDeleteValueA = ImportSymbol("Advapi32.dll", "RegDeleteValueA")
+            INT impRegCloseKey     = ImportSymbol("Advapi32.dll", "RegCloseKey")
+            INT key                = 0
+            HEX registryPath       = "SOFTWARE\\Piranha Bytes\\Spacer\\Settings\\\0"
+            HEX registryValue      = "winMain\0"
+            #assembler [ResetSpacerWindow]
+                lea     eax, dword ptr [$key]
+                push    eax                     ; key
+                push    2                       ; access
+                push    0                       ; flags
+                push    $registryPath           ; path
+                push    0x80000001              ; key
+                call    $impRegOpenKeyExA
+                cmp     eax, 0
+                jnz     return
+                push    $registryValue
+                push    dword ptr [$key]
+                call    $impRegDeleteValueA
+                push    dword ptr [$key]
+                call    $impRegCloseKey
+            return:
+                ret
+            #/assembler
+            ResetSpacerWindow()
+        END
     #/patch
 #/engine
 
@@ -113,7 +121,7 @@
         INT Lang_Other = 0
         INT Lang_Rus = 1
         INT Lang_Eng = 2
-        INT Lang_Ger = 3
+        INT Lang_Deu = 3
         INT Lang_Pol = 4
         INT Lang_Rou = 5
         INT Lang_Ita = 6
@@ -129,13 +137,16 @@
         AllocPage(6, 0x100)    //DS for sliding fix and etc
         
         OptionDef(BOOL  @UNION:GAME:SaveGameToASCII,                            0)
-        OptionDef(BOOL  @UNION:GAME:SaveDATinASCII,                             1)
+        OptionDef(BOOL  @UNION:GAME:SaveDATinASCII,                             0)
         OptionDef(BOOL  @UNION:DEBUG:ReadBinkWithVDFS,                          true)
         OptionDef(BOOL  @UNION:DEBUG:UseErrorVisuals,                           false)
-        OptionDef(BOOL  @UNION:DEBUG:FixBink,                                   true)
+        OptionDef(BOOL  @UNION:DEBUG:FixBink,                                   false)
+        OptionDef(BOOL  @UNION:DEBUG:FixBinkNew,                                true)
         OptionDef(BOOL  @Union:Core:CustomDebugWindowPos,                       false)
         OptionDef(BOOL  @Union:Core:DebugWindowPosX,                            0)
         OptionDef(BOOL  @Union:Core:DebugWindowPosY,                            0)
+        OptionDef(BOOL  @Union:Core:UseDebugWindowHost,                         1)
+        OptionDef(BOOL  @SYSTEMPACK:DEBUG:BorderFix,                            1)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:OptimizeVB,                           0)
         OptionDef(INT   @SYSTEMPACK:DEBUG:dwNumVertices,                        8192)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:Disable_D3DVBCAPS_WRITEONLY,          1)
@@ -148,7 +159,7 @@
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:NumLockDisable,                       1)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:DisableCacheOut,                      1)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:QuickSaveEnable,                      1)
-        OptionDef(BOOL  @SYSTEMPACK:DEBUG:USInternationalKeyboardLayout,        Language != Lang_Ger)
+        OptionDef(BOOL  @SYSTEMPACK:DEBUG:USInternationalKeyboardLayout,        Language != Lang_Deu)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:PfxFix,                               1)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:BUGFIX_already_deleted_zCObject,      1)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:Disable_HUMANS_SWIM_MDS,              0)
@@ -158,6 +169,7 @@
         OptionDef(INT   @SYSTEMPACK:DEBUG:LineCacheSize,                        16384)
         OptionDef(INT   @SYSTEMPACK:DEBUG:ForceFlip,                            0)
         OptionDef(INT   @SYSTEMPACK:DEBUG:DisableOcclusionCulling,              0)
+        OptionDef(BOOL  @SYSTEMPACK:DEBUG:TerminateProcessHotkey,               true)
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:Gothic2_Control,                 1)
         OptionDef(INT   @SYSTEMPACK:PARAMETERS:FPS_Limit,                       0)
         OptionDef(INT   @SYSTEMPACK:PARAMETERS:AnisotropicFiltering,            0)
@@ -180,6 +192,8 @@
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:HideFocus,                       1)
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:ThrowFlag,                       1)
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:InteractionCollision,            1)
+        OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:TestHardCollisionsOnLadder,      false)
+        OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:AdvancedFloorCheckForInteract,   true)
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:RainVobCollision,                1)
         OptionDef(BOOL  @SYSTEMPACK:BARRIER:AlwaysON,                           0)
         OptionDef(BOOL  @SYSTEMPACK:BARRIER:AlwaysOFF,                          0)
@@ -230,17 +244,6 @@
         OptionDef(FLOAT @UNION:DEBUG:SlidingSize,                               0.05)
     #/patch
 
-    #patch [Load Steam Overlay]
-        IF INT @SYSTEMPACK:DEBUG:OptimizeVB == 0
-            HEX hSteamDirectory = FindSteamDirectory()
-            INT nLength = GetHexSize(hSteamDirectory)
-            INT nSteamPID = GetProcessID("Steam.exe")
-            IF hSteamDirectory != "" && nSteamPID != INVALID
-                LoadLibrary(Concat(hSteamDirectory, "/GameOverlayRenderer.dll.tmp"))
-            END
-        END
-    #/patch
-    
     #patch [CodeCave - 1]
         HEX @0x007396FE = 'E9 D0 02 00 00'
         INT begin = 0x00739703
@@ -1175,9 +1178,11 @@
 
     #patch [SendMessage - BroadCast fix]
         INT hWindow     = FindWindow(NULL, "[zSpy]")
-        INT @0x00447F5A = hWindow
-        INT @0x00449280 = hWindow
-        INT @0x004480AF = hWindow
+        IF INT @0x00447F5A != INT '90 90 90 90'
+            INT @0x00447F5A = hWindow
+            INT @0x00449280 = hWindow
+            INT @0x004480AF = hWindow
+        END
     #/patch
 
     #patch [Magic_Collision_Fix]    
@@ -1233,6 +1238,7 @@
 
     #patch [MobInterCollision]    
         IF BOOL @SYSTEMPACK:PARAMETERS:InteractionCollision
+            BOOL laddersTestHardCollisions = BOOL @SYSTEMPACK:PARAMETERS:TestHardCollisionsOnLadder
             #assembler [MobInterCollision]
                 mov     edx, [ebx+84h]              ; vob
                 mov     eax, [edx+160]              ; type
@@ -1240,13 +1246,22 @@
                 jnz     detectCollisions
                 mov     eax, dword ptr [edx+99Ch]   ; interactMob
                 test    eax, eax
-                jnz     00538907h
+                jz      detectCollisions
+                push    eax
+                mov     eax, $laddersTestHardCollisions
+                test    eax, eax
+                pop     eax
+                jz      return
+                cmp     dword ptr [eax], 7DD794h    ; oCMobLadder vftable
+                jnz     return
             detectCollisions:
                 mov     eax, [ebx]
                 push    esi
                 mov     edx, edi
                 mov     ecx, ebx
                 jmp     00538904h
+            return:
+                jmp     00538907h
             #/assembler
             JMP(0x005388FD, MobInterCollision)
             CALL(0x0067D0A9, 0x006D43C0)
@@ -1482,18 +1497,32 @@
     #patch [Aligning npc by ladder]
         HEX vector = '00 00 00 00 00 00 00 00 00 00 00 00'
         
-        #assembler [0x00685DEA]
+        #assembler [0x00685B46]
             cmp     dword ptr [esi], 7DD794h ; oCMobLadder vftable
             jnz     return
             mov     ecx, esi                 ; ladder
             lea     eax, [$vector]       
             push    eax                      ; vector
             call    0051B3E0h                ; GetAtVectorWorld
-            mov     ecx, edi                 ; npc
+            mov     ecx, [esp+40h]           ; npc
+            test    ecx, ecx
+            jz      return
             push    eax      
             call    005EF640h                ; SetHeadingAtWorld
         return:
             orgcode
+        #/assembler
+        
+        #assembler [0x005EF837]
+            orgcode
+            test    eax, eax
+            jz      0x005EF8BC
+        #/assembler
+        
+        #assembler [0x005F0601]
+            orgcode
+            test    eax, eax
+            jz      0x005F067B
         #/assembler
     #/patch
     
@@ -1709,57 +1738,6 @@
         #/assembler
     #/patch
     
-    #patch [Create draw and remove weapon perceptions on run]
-        INT this = 0
-        #assembler [0x006A8508]
-            mov     [$this], ecx
-            orgcode
-        #/assembler
-        #assembler [0x006A8B5C]
-            test    eax, eax
-            jz      returnFalse
-            mov     ecx, [$this]
-            mov     eax, [ecx]
-            mov     eax, [eax+100h] ; IsAPlayer
-            call    eax
-            test    eax, eax
-            jz      returnTrue
-            push    0
-            push    ecx
-            push    24              ; NPC_PERC_DRAWWEAPON
-            call    6B49C0h         ; CreatePassivePerception
-        returnTrue:
-            mov     eax, 1
-        returnFalse:
-            orgcode
-        #/assembler
-        MemSet(0x006A938F, '90', 0x006A939B - 0x006A938F)
-        
-        #assembler [0x006A93C8]
-            mov     [$this], ecx
-            orgcode
-        #/assembler
-        #assembler [0x006A9774]
-            test    eax, eax
-            jz      returnFalse
-            mov     ecx, [$this]
-            mov     eax, [ecx]
-            mov     eax, [eax+100h] ; IsAPlayer
-            call    eax
-            test    eax, eax
-            jz      returnTrue
-            push    0
-            push    ecx
-            push    11              ; NPC_PERC_ASSESSREMOVEWEAPON
-            call    6B49C0h         ; CreatePassivePerception
-        returnTrue:
-            mov     eax, 1
-        returnFalse:
-            orgcode
-        #/assembler
-        MemSet(0x006A9C4C, '90', 0x006A9C58 - 0x006A9C4C)
-    #/patch
-    
     #patch [Close alpha-lines on multipage documents]
         #assembler [0x00725B12]
             mov     ebx, [edi+48h]
@@ -1871,6 +1849,110 @@
         return:
         #/assembler
     #/patch
+
+    #patch [Fix crash while transforming in water]
+        #assembler [0x004FEE84]
+            push ecx
+            mov ecx, [ecx+00A8h] ; homeWorld
+            cmp ecx, 0
+            pop ecx
+            je 0x004FF788
+            orgcode
+        #/assembler
+    #/patch
+
+    #patch [Disable frame activity on pause]
+        #assembler [0x005D75B1]
+            orgcode
+            mov     eax, [ecx+00A0h]    ; type
+            cmp     eax, 130            ; zVOB_TYPE_NSC
+            jnz     return
+            mov     eax, 0x008CF1E8     ; ztimer
+            mov     eax, [eax+04h]      ; frameTimeFloat
+            test    eax, eax
+            jz      0x005D77A4
+        return:
+        #/assembler
+    #/patch
+    
+    #patch [Stunlock fix when meatbug tries to draw weapon]
+        #assembler [0x0065F41B]
+            orgcode
+            cmp     dword [ecx + 0x1e8], 0x17
+            jnz     return
+            mov     eax, 1
+            return:
+            
+        #/assembler
+    #/patch
+	
+    #patch [First day in savegame is 1]
+        #assembler [0x004350B0]
+            inc eax
+            orgcode
+        #/assembler
+    #/patch
+    
+    #patch [Fit viewport to screen]
+        INT this_717510
+        #assembler [0x00717510]
+            mov [$this_717510], ecx
+            orgcode
+        #/assembler
+        #assembler [0x0071754A]
+            push    ecx
+            push    edx
+            push    ebx
+            mov     ecx, [$this_717510]
+        width:  
+            mov     ebx, [edx+0]      ; dwX
+            add     ebx, [edx+8]      ; dwWidth
+            cmp     ebx, [ecx+0Ch]    ; vid_xdim
+            jle     height
+            mov     ebx, [ecx+0Ch]
+            sub     ebx, [edx+0]
+            mov     [edx+8], ebx
+        height:        
+            mov     ebx, [edx+4]      ; dwY
+            add     ebx, [edx+12]     ; dwHeight
+            cmp     ebx, [ecx+10h]    ; vid_ydim
+            jle     return
+            mov     ebx, [ecx+10h]
+            sub     ebx, [edx+4]
+            mov     [edx+12], ebx
+        return: 
+            pop     ebx
+            pop     edx
+            pop     ecx
+            orgcode
+        #/assembler
+    #/patch
+    
+    #patch [Create drawweapon perception]
+      #assembler [0x006A8AD1]
+          mov ecx, esi
+          push 0
+          push esi
+          push 24
+          call 0x006B49C0
+          orgcode
+      #/assembler
+    #/patch
+   
+    #patch [Create removeweapon perception]
+       #assembler [0x006A96E8]
+           mov ecx, esi
+           push 0
+           push esi
+           push 11
+           call 0x006B49C0
+           orgcode
+       #/assembler
+    #/patch
+    
+    #patch [Fix NPC_KnowsInfo]
+        JMP(0x006652B8, 0x006652C4)
+    #/patch
 #/engine
 
 #engine [G1A]
@@ -1882,13 +1964,15 @@
         AllocPage(5, 0x100)   //DS for sliding fix and etc
         
         OptionDef(BOOL  @UNION:GAME:SaveGameToASCII,                           0)
-        OptionDef(BOOL  @UNION:GAME:SaveDATinASCII,                            1)
+        OptionDef(BOOL  @UNION:GAME:SaveDATinASCII,                            0)
         OptionDef(BOOL  @UNION:DEBUG:ReadBinkWithVDFS,                         true)
         OptionDef(BOOL  @UNION:DEBUG:UseErrorVisuals,                          false)
         OptionDef(BOOL  @UNION:DEBUG:FixBink,                                  true)
         OptionDef(BOOL  @Union:Core:CustomDebugWindowPos,                      false)
         OptionDef(BOOL  @Union:Core:DebugWindowPosX,                           0)
         OptionDef(BOOL  @Union:Core:DebugWindowPosY,                           0)
+        OptionDef(BOOL  @Union:Core:UseDebugWindowHost,                        1)
+        OptionDef(BOOL  @SYSTEMPACK:DEBUG:BorderFix,                           1)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:BorderlessWindow,                    0)
         OptionDef(INT   @SYSTEMPACK:DEBUG:WindowPosX,                          0)
         OptionDef(INT   @SYSTEMPACK:DEBUG:WindowPosY,                          0)
@@ -1896,6 +1980,7 @@
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:Disable_D3DVBCAPS_WRITEONLY,         1)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:NumLockDisable,                      1)
         OptionDef(INT   @SYSTEMPACK:DEBUG:LineCacheSize,                       16384)
+        OptionDef(BOOL  @SYSTEMPACK:DEBUG:TerminateProcessHotkey,              true)
         OptionDef(INT   @SYSTEMPACK:PARAMETERS:AnisotropicFiltering,           0)
         OptionDef(FLOAT @SYSTEMPACK:PARAMETERS:VerticalFOV,                    67.5)
         OptionDef(FLOAT @SYSTEMPACK:PARAMETERS:SPAWN_INSERTRANGE,              4500)
@@ -2187,10 +2272,34 @@
         HEX @0x0073A9FB = '90'
         HEX @0x0073A9FC = Call(0x0073A9FC, 0x00718810)
     #/patch
+
+    #patch [CompatData fix]
+        IF BOOL @SYSTEMPACK:DEBUG:BorderFix
+            INT address = ImportSymbol("ddraw.dll", "SetAppCompatData")
+            IF address != 0
+                HEX @impSetAppCompatData = address 
+                impSetAppCompatData(12, 0)
+            END
+        END
+    #/patch
+
+    #patch [Fix crash while transforming in water]
+        #assembler [0x00512316]
+            push ecx
+            mov ecx, [ecx+00A8h] ; homeWorld
+            cmp ecx, 0
+            pop ecx
+            je 0x00512CA8
+            orgcode
+        #/assembler
+    #/patch
+    
+    #patch [Fix NPC_KnowsInfo]
+        HEX @0x006925A1 = 'EB'
+    #/patch
 #/engine
 
 #engine [G2]
-
     #patch [GLOBAL DATA]
         AllocPage(1, 0x10000)  //ALPHA_VOB; ALPHA_WORLD_POLY
         AllocPage(2, 0x30000)  //ALPHA_VOB; ALPHA_WORLD_POLY
@@ -2201,13 +2310,15 @@
         AllocPage(7, 0x100)    //DS for sliding fix and etc
         
         OptionDef(BOOL  @UNION:GAME:SaveGameToASCII,                            0)
-        OptionDef(BOOL  @UNION:GAME:SaveDATinASCII,                             1)
+        OptionDef(BOOL  @UNION:GAME:SaveDATinASCII,                             0)
         OptionDef(BOOL  @UNION:DEBUG:ReadBinkWithVDFS,                          true)
         OptionDef(BOOL  @UNION:DEBUG:UseErrorVisuals,                           false)
         OptionDef(BOOL  @UNION:DEBUG:FixBink,                                   true)
         OptionDef(BOOL  @Union:Core:CustomDebugWindowPos,                       false)
         OptionDef(BOOL  @Union:Core:DebugWindowPosX,                            0)
         OptionDef(BOOL  @Union:Core:DebugWindowPosY,                            0)
+        OptionDef(BOOL  @Union:Core:UseDebugWindowHost,                         1)
+        OptionDef(BOOL  @SYSTEMPACK:DEBUG:BorderFix,                            1)
         OptionDef(INT   @SYSTEMPACK:DEBUG:dwNumVertices,                        8192)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:Disable_D3DVBCAPS_WRITEONLY,          1)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:SimpleWindow,                         1)
@@ -2221,6 +2332,7 @@
         OptionDef(INT   @SYSTEMPACK:DEBUG:Cache_Timeout,                        400)
         OptionDef(INT   @SYSTEMPACK:DEBUG:LineCacheSize,                        16384)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:Polish_version,                       0)
+        OptionDef(BOOL  @SYSTEMPACK:DEBUG:TerminateProcessHotkey,               true)
         OptionDef(INT   @SYSTEMPACK:PARAMETERS:AnisotropicFiltering,            0)
         OptionDef(FLOAT @SYSTEMPACK:PARAMETERS:VerticalFOV,                     67.5)
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:NewFOVformula,                   0)
@@ -3054,15 +3166,39 @@
         HEX @0x0074A4A4 = '90'
         HEX @0x0074A4A5 = Call(0x0074A4A5, 0x00729AA0)
     #/patch
+
+    #patch [CompatData fix]
+        IF BOOL @SYSTEMPACK:DEBUG:BorderFix
+            INT address = ImportSymbol("ddraw.dll", "SetAppCompatData")
+            IF address != 0
+                HEX @impSetAppCompatData = address 
+                impSetAppCompatData(12, 0)
+            END
+        END
+    #/patch
+
+    #patch [Fix crash while transforming in water]
+        #assembler [0x0050BC44]
+            push ecx
+            mov ecx, [ecx+00B8h] ; homeWorld
+            cmp ecx, 0
+            pop ecx
+            je 0x0050C4B2
+            orgcode
+        #/assembler
+    #/patch
+    
+    #patch [Fix NPC_KnowsInfo]
+        JMP(0x006A5738, 0x006A5744)
+    #/patch
 #/engine
 
 #engine [G2A]
-    
     #patch [GLOBAL DATA]
         INT Lang_Other = 0
         INT Lang_Rus = 1
         INT Lang_Eng = 2
-        INT Lang_Ger = 3
+        INT Lang_Deu = 3
         INT Lang_Pol = 4
         INT Lang_Rou = 5
         INT Lang_Ita = 6
@@ -3078,13 +3214,16 @@
         AllocPage(7, 0x100)    //DS for sliding fix and etc
         
         OptionDef(BOOL  @UNION:GAME:SaveGameToASCII,                            0)
-        OptionDef(BOOL  @UNION:GAME:SaveDATinASCII,                             1)
+        OptionDef(BOOL  @UNION:GAME:SaveDATinASCII,                             0)
         OptionDef(BOOL  @UNION:DEBUG:ReadBinkWithVDFS,                          true)
         OptionDef(BOOL  @UNION:DEBUG:UseErrorVisuals,                           false)
-        OptionDef(BOOL  @UNION:DEBUG:FixBink,                                   true)
+        OptionDef(BOOL  @UNION:DEBUG:FixBink,                                   false)
+        OptionDef(BOOL  @UNION:DEBUG:FixBinkNew,                                true)
         OptionDef(BOOL  @Union:Core:CustomDebugWindowPos,                       false)
         OptionDef(BOOL  @Union:Core:DebugWindowPosX,                            0)
         OptionDef(BOOL  @Union:Core:DebugWindowPosY,                            0)
+        OptionDef(BOOL  @Union:Core:UseDebugWindowHost,                         1)
+        OptionDef(BOOL  @SYSTEMPACK:DEBUG:BorderFix,                            1)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:OptimizeVB,                           0)
         OptionDef(INT   @SYSTEMPACK:DEBUG:dwNumVertices,                        8192)
         OptionDef(BOOL  @SYSTEMPACK:DEBUG:Disable_D3DVBCAPS_WRITEONLY,          1)
@@ -3101,6 +3240,8 @@
         OptionDef(INT   @SYSTEMPACK:DEBUG:LineCacheSize,                        16384)
         OptionDef(INT   @SYSTEMPACK:DEBUG:ForceFlip,                            0)
         OptionDef(INT   @SYSTEMPACK:DEBUG:DisableOcclusionCulling,              0)
+        OptionDef(BOOL  @SYSTEMPACK:DEBUG:TerminateProcessHotkey,               true)
+        OptionDef(BOOL  @SYSTEMPACK:DEBUG:RestoreMortalityAfterDialog,          0)
         OptionDef(INT   @SYSTEMPACK:PARAMETERS:AnisotropicFiltering,            0)
         OptionDef(FLOAT @SYSTEMPACK:PARAMETERS:VerticalFOV,                     67.5)
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:NewFOVformula,                   0)
@@ -3119,6 +3260,8 @@
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:RMB_No_Take_Anim,                0)
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:HideFocus,                       1)
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:InteractionCollision,            1)
+        OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:TestHardCollisionsOnLadder,      false)
+        OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:AdvancedFloorCheckForInteract,   true)
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:ShowArmor,                       0)
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:RainVobCollision,                1)
         OptionDef(BOOL  @SYSTEMPACK:PARAMETERS:AbortMenuSound,                  1)
@@ -3160,23 +3303,6 @@
         OptionDef(FLOAT @UNION:DEBUG:SlidingSize,                               0.05)
     #/patch
     
-    #patch [Load Steam Overlay]
-        IF INT @SYSTEMPACK:DEBUG:OptimizeVB == 0
-            HEX hSteamDirectory = FindSteamDirectory()
-            INT nLength = GetHexSize(hSteamDirectory)
-            IF hSteamDirectory != NULL
-                LoadLibrary(Concat(hSteamDirectory, "/GameOverlayRenderer.dll.tmp"))
-                INT nGothicPID = GetProcessID(NULL)
-                INT nSteamPID = GetProcessID("Steam.exe")
-                IF nGothicPID != INVALID && nSteamPID != INVALID
-                    HEX hProcessPath = Concat(hSteamDirectory, "/GameOverlayUI.exe")
-                    HEX hparameters  = Concat(" -pid ", nGothicPID, " -steampid ", nSteamPID, " -manuallyclearframes 0 -gameid 39510")
-                    StartProcess(hProcessPath, hparameters)
-                END
-            END
-        END
-    #/patch
-    
     #patch [CodeCave - 1]
         HEX @0x0066E8AE = 'E9 FF 01 00 00'
         INT begin = 0x0066E8B3
@@ -3190,9 +3316,11 @@
     
     #patch [SendMessage - BroadCast fix]
         INT hWindow     = FindWindow(NULL, "[zSpy]")
-        INT @0x0044C5DA = hWindow
-        INT @0x0044D9A0 = hWindow
-        INT @0x0044C72F = hWindow
+        IF INT @0x0044C5DA != INT '90 90 90 90'
+            INT @0x0044C5DA = hWindow
+            INT @0x0044D9A0 = hWindow
+            INT @0x0044C72F = hWindow
+        END
     #/patch
     
     #patch [Gothic.ini fixes]
@@ -3214,7 +3342,7 @@
         IF  BOOL @GAME:INTERNAL:gameAbnormalExit == 1
             BOOL @GAME:INTERNAL:gameAbnormalExit = 0
         END
-        IF Language == Lang_Ger
+        IF Language == Lang_Deu
             HEX @GAME:GAME:keyboardLayout == "00000407"
         ELSE
             HEX @GAME:GAME:keyboardLayout == "00020409"
@@ -3848,6 +3976,7 @@
 
     #patch [MobInterCollision]
         IF BOOL @SYSTEMPACK:PARAMETERS:InteractionCollision
+            BOOL laddersTestHardCollisions = BOOL @SYSTEMPACK:PARAMETERS:InteractionCollision_TestHardCollisionsOnLadder
             #assembler [MobInterCollision]
                 mov     edx, [ebx+84h]              ; vob
                 mov     eax, [edx+176]              ; type
@@ -3855,13 +3984,22 @@
                 jnz     detectCollisions
                 mov     eax, dword ptr [edx+964h]   ; interactMob
                 test    eax, eax
-                jnz     0054CE97h
+                jz      detectCollisions
+                push    eax
+                mov     eax, $laddersTestHardCollisions
+                test    eax, eax
+                pop     eax
+                jz      return
+                cmp     dword ptr [eax], 83CF2Ch    ; oCMobLadder vftable
+                jnz     return
             detectCollisions:
                 mov     eax, [ebx]
                 push    esi
                 mov     edx, edi
                 mov     ecx, ebx
                 jmp     0054CE94h
+            return:
+                jmp     0054CE97h
             #/assembler
             JMP(0x0054CE8D, MobInterCollision)
             CALL(0x0071E400, 0x0077D0E0)
@@ -4037,8 +4175,7 @@
         INT @0x0070F5E9 = INV_MAX_ITEMS
     #/patch
 
-    /*
-    #patch [Stop Focus Talk]
+    /* #patch [Stop Focus Talk]
         INT GetTalkingWith = 0x006BCF60
         INT GetFocusNpc = 0x00732BF0
         INT Delta = GetFocusNpc - GetTalkingWith
@@ -4052,8 +4189,7 @@
         INT @CallB += Delta
         INT @CallC += Delta
         INT @CallD += Delta
-    #/patch
-    */
+    #/patch */
 
     #patch [Fix double spawn for summons]
         HEX @0x00778AF5 = '90 90 90 90 90 90 90 90 90 90'
@@ -4127,20 +4263,32 @@
     #patch [Aligning npc by ladder]
         HEX vector = '00 00 00 00 00 00 00 00 00 00 00 00'
         
-        #assembler [0x00727E45]
+        #assembler [0x00727AA4]
             cmp     dword ptr [ebp], 83CF2Ch ; oCMobLadder vftable
             jnz     return
             mov     ecx, ebp                 ; ladder
             lea     eax, [$vector]       
             push    eax                      ; vector
             call    52DCB0h                  ; GetAtVectorWorld
-            mov     ecx, edi                 ; npc
+            mov     ecx, [esp+3Ch+4]         ; npc
             test    ecx, ecx
             jz      return
             push    eax      
             call    61CBC0h                  ; SetHeadingAtWorld
         return:
             orgcode
+        #/assembler
+        
+        #assembler [0x0061CDB7]
+            orgcode
+            test    eax, eax
+            jz      0x0061CE3E
+        #/assembler
+        
+        #assembler [0x0061DB71]
+            orgcode
+            test    eax, eax
+            jz      0x0061DBEB
         #/assembler
     #/patch
 
@@ -4174,8 +4322,7 @@
         HEX @0x006B307E = '90 90 90'        
     #/patch
 
-    /*
-    #patch [Don't open inventory when spell casting]
+    /* #patch [Don't open inventory when spell casting]
         #assembler [LockInventory]
             push    ecx         ; save npc
             call    734B40h     ; GetAnictrl
@@ -4190,8 +4337,7 @@
             jmp     6FC5DCh
         #/assembler
         JMP(0x006FC5D6, LockInventory)
-    #/patch
-    */
+    #/patch */
     
     #patch [Step sounds in more actions]
         #assembler [NpcIsMoving]
@@ -4305,57 +4451,6 @@
             call    75E920h
         return:
         #/assembler
-    #/patch
-    
-    #patch [Create draw and remove weapon perceptions on run]
-        INT this = 0
-        #assembler [0x0074CC18]
-            mov     [$this], ecx
-            orgcode
-        #/assembler
-        #assembler [0x0074D2C4]
-            test    eax, eax
-            jz      returnFalse
-            mov     ecx, [$this]
-            mov     eax, [ecx]
-            mov     eax, [eax+100h] ; IsAPlayer
-            call    eax
-            test    eax, eax
-            jz      returnTrue
-            push    0
-            push    ecx
-            push    24              ; NPC_PERC_DRAWWEAPON
-            call    75B270h         ; CreatePassivePerception
-        returnTrue:
-            mov     eax, 1
-        returnFalse:
-            orgcode
-        #/assembler
-        MemSet(0x0074DAEF, '90', 0x0074DAFB - 0x0074DAEF)
-        
-        #assembler [0x0074DB22]
-            mov     [$this], ecx
-            orgcode
-        #/assembler        
-        #assembler [0x0074E494]
-            test    eax, eax
-            jz      returnFalse
-            mov     ecx, [$this]
-            mov     eax, [ecx]
-            mov     eax, [eax+100h] ; IsAPlayer
-            call    eax
-            test    eax, eax
-            jz      returnTrue
-            push    0
-            push    ecx
-            push    11              ; NPC_PERC_ASSESSREMOVEWEAPON
-            call    75B270h         ; CreatePassivePerception
-        returnTrue:
-            mov     eax, 1
-        returnFalse:
-            orgcode
-        #/assembler
-        MemSet(0x0074E955, '90', 0x0074E961 - 0x0074E955)
     #/patch
     
     #patch [Close alpha-lines on multipage documents]
@@ -4525,5 +4620,125 @@
         FLOAT @0x00682F12 = 0.0
         FLOAT @0x00682FAF = 0.0
         FLOAT @0x00682FB4 = 0.0
+    #/patch
+
+    #patch [Disallow locking focus non-npc objects]
+        #assembler [0x006FC20C]
+            mov     ecx, dword ptr ds:[0x00AB2684]  ; player
+            test    ecx, ecx
+            jz      0x006FC21E
+            call    0x00732BF0                      ; GetFocusNpc
+            test    eax, eax
+            jz      0x006FC21E
+            orgcode
+        #/assembler
+    #/patch
+
+    #patch [Fix crash while transforming in water]
+        #assembler [0x0050E9F4]
+            push ecx
+            mov ecx, [ecx+00B8h] ; homeWorld
+            cmp ecx, 0
+            pop ecx
+            je 0x0050F268
+            orgcode
+        #/assembler
+    #/patch
+
+    #patch [Restore mortality after dialog]
+        IF BOOL @SYSTEMPACK:DEBUG:RestoreMortalityAfterDialog
+            INT memString = CreateMemString("AIV_INVINCIBLE")
+            #assembler[0x006631B9]
+                mov     ebp, [ecx+24h]          ; Player
+                test    ebp, ebp
+                jz      return
+                
+                push    ecx
+                mov     ecx, 0x00AB40C0         ; parser
+                push    $memString
+                call    0x007938D0              ; GetSymbol
+                pop     ecx
+                test    eax, eax
+                jz      return
+                
+                mov     eax, [eax+18h]          ; single_intdata
+                mov     ebx, 0
+                mov     [ebp+288h+eax*4], ebx   ; aiscriptvars[eax]
+            return:
+                orgcode
+            #/assembler
+        END
+    #/patch
+
+    #patch [Disable frame activity on pause]
+        #assembler [0x00602C71]
+            orgcode
+            mov     eax, [ecx+00B0h]    ; type
+            cmp     eax, 130            ; zVOB_TYPE_NSC
+            jnz     return
+            mov     eax, 0x0099B3D4     ; ztimer
+            mov     eax, [eax+04h]      ; frameTimeFloat
+            test    eax, eax
+            jz      0x00602EC3
+        return:
+        #/assembler
+    #/patch
+
+    #patch [VISEME at 60Hz fix]
+        #assembler [0x005A6863]
+            orgcode
+            FADD DWORD PTR DS:[0x0082F330]
+        #/assembler
+
+        #assembler [0x005A6893]
+            orgcode
+            FADD DWORD PTR DS:[0x0082F330]
+        #/assembler		
+    #/patch
+	
+    #patch [First day in savegame is 1]
+        #assembler [0x00438485]
+            inc edi
+            orgcode
+        #/assembler
+    #/patch
+    
+    #patch [Fit viewport to screen]
+        INT this_64F100
+        #assembler [0x0064F100]
+            mov [$this_64F100], ecx
+            orgcode
+        #/assembler
+        #assembler [0x0064F15E]
+            push    ecx
+            push    edx
+            push    ebx
+            mov     ecx, [$this_64F100]
+        width:  
+            mov     ebx, [edx+0]      ; dwX
+            add     ebx, [edx+8]      ; dwWidth
+            cmp     ebx, [ecx+0Ch]    ; vid_xdim
+            jle     height
+            mov     ebx, [ecx+0Ch]
+            sub     ebx, [edx+0]
+            mov     [edx+8], ebx
+        height:        
+            mov     ebx, [edx+4]      ; dwY
+            add     ebx, [edx+12]     ; dwHeight
+            cmp     ebx, [ecx+010h]   ; vid_ydim
+            jle     return
+            mov     ebx, [ecx+010h]
+            sub     ebx, [edx+4]
+            mov     [edx+12], ebx
+        return: 
+            pop     ebx
+            pop     edx
+            pop     ecx
+            orgcode
+        #/assembler
+    #/patch
+    
+    #patch [Fix NPC_KnowsInfo]
+        JMP(0x007031C8, 0x007031D4)
     #/patch
 #/engine
