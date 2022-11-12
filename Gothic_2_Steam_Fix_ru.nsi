@@ -21,8 +21,8 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "07.2022"
-!define MOD_DETAILED_VERSION "22.7.1.0"
+!define MOD_VERSION "11.2022"
+!define MOD_DETAILED_VERSION "22.11.13.0"
 !define MOD_AUTHOR "D36"
 !define SCRIPTPATCH_VERSION "28"
 
@@ -112,14 +112,13 @@ Section "Основные патчи и обновления" SecMain
 	File "d3d11.dll"
 
 	SetOutPath "$INSTDIR\System"
-	Rename $INSTDIR\system\Gothic2.exe $INSTDIR\system\GothicMod.exe
 	File "Gothic.ini"
-	File "Gothic2.exe"
 	File "GothicGame.ini"
 	File "GothicGame.rtf"
 	File "msvcp100.dll"
 	File "msvcr100.dll"
 	File "Shw32.dll"
+	File "stdhost.exe"
 	File "SystemPack.ini"
 	File "Union.patch"
 	File "vdfs32g.dll"
@@ -134,6 +133,11 @@ Section "Основные патчи и обновления" SecMain
 
 	CreateDirectory "$INSTDIR\Saves_G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}\current"
 
+	IfFileExists "$INSTDIR\System\GothicMod.exe" 0 CustomStarterNotFound
+	Delete "$INSTDIR\system\Gothic2.exe"
+	Rename $INSTDIR\system\GothicMod.exe $INSTDIR\system\Gothic2.exe
+	CustomStarterNotFound:
+
 SectionEnd
 
 
@@ -145,18 +149,7 @@ Section "Дополнительная русская озвучка" SecAdditional_1
 SectionEnd
 
 
-Section "Исправление русской озвучки" SecAdditional_2
-
-	SetOutPath "$INSTDIR\Data"
-	File "Speech_RU_Fix.vdf"
-
-	SetOutPath $INSTDIR
-	File "Changelog_Speech.txt"
-
-SectionEnd
-
-
-Section "Широкоформатный монитор" SecAdditional_3
+Section "Широкоформатный монитор" SecAdditional_2
 
 	SetOutPath "$INSTDIR\Data"
 	File "Textures_Russian_Widescreen.vdf"
@@ -164,7 +157,7 @@ Section "Широкоформатный монитор" SecAdditional_3
 SectionEnd
 
 
-Section /o "Расширенная Рудниковая долина" SecAdditional_4
+Section /o "Расширенная Рудниковая долина" SecAdditional_3
 
 	SetOutPath "$INSTDIR\Data\ModVDF"
 	File "scriptpatch_v${SCRIPTPATCH_VERSION}_wasteland.mod"
@@ -172,7 +165,7 @@ Section /o "Расширенная Рудниковая долина" SecAdditional_4
 SectionEnd
 
 
-Section /o "Поддержка геймпада" SecAdditional_5
+Section /o "Поддержка геймпада" SecAdditional_4
 
 	SetOutPath "$INSTDIR\Data\Plugins"
 	File "zGamePad.vdf"
@@ -184,12 +177,11 @@ SectionEnd
 ##     Описание компонентов      ##
 ###################################
 
-LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты сборника (Union 1.0m, стартер модов, оптимизатор лаунчера)."
+LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты сборника (Union 1.0m, оптимизатор лаунчера)."
 LangString DESC_SecAdditional_1 ${LANG_RUSSIAN} "Снимите галочку, если установка производится на версию игры без русской озвучки."
-LangString DESC_SecAdditional_2 ${LANG_RUSSIAN} "Неофициальное исправление русской озвучки от Акеллы (версия 1.14)."
-LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Установка фона главного меню и загрузочных экранов для широкоформатных мониторов."
-LangString DESC_SecAdditional_4 ${LANG_RUSSIAN} "Мод Wasteland, расширяющий и заполняющий мир Рудниковой долины до размеров Готики 1."
-LangString DESC_SecAdditional_5 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите играть на геймпаде."
+LangString DESC_SecAdditional_2 ${LANG_RUSSIAN} "Установка фона главного меню и загрузочных экранов для широкоформатных мониторов."
+LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Мод Wasteland, расширяющий и заполняющий мир Рудниковой долины до размеров Готики 1."
+LangString DESC_SecAdditional_4 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите играть на геймпаде."
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SecMain} $(DESC_SecMain)
@@ -197,7 +189,6 @@ LangString DESC_SecAdditional_5 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_2} $(DESC_SecAdditional_2)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_3} $(DESC_SecAdditional_3)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_4} $(DESC_SecAdditional_4)
-!insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_5} $(DESC_SecAdditional_5)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ###################################

@@ -20,8 +20,8 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "07.2022"
-!define MOD_DETAILED_VERSION "22.7.1.0"
+!define MOD_VERSION "11.2022"
+!define MOD_DETAILED_VERSION "22.11.13.0"
 !define MOD_AUTHOR "D36"
 
 Name "${MOD_NAME}"
@@ -93,18 +93,22 @@ Section "Main" SecMain
 	File "d3d11.dll"
 
 	SetOutPath "$INSTDIR\System"
-	Rename $INSTDIR\system\Gothic2.exe $INSTDIR\system\GothicMod.exe
 	File "Gothic.ini"
-	File "Gothic2.exe"
 	File "msvcp100.dll"
 	File "msvcr100.dll"
 	File "Shw32.dll"
+	File "stdhost.exe"
 	File "Union.patch"
 	File "vdfs32g.dll"
 	!insertmacro GMF_File_Rename "SystemPack_int.ini" "SystemPack.ini"
 
 	SetOutPath "$INSTDIR\System\autorun"
 	File "AutoScreenRes.dll"
+
+	IfFileExists "$INSTDIR\System\GothicMod.exe" 0 CustomStarterNotFound
+	Delete "$INSTDIR\system\Gothic2.exe"
+	Rename $INSTDIR\system\GothicMod.exe $INSTDIR\system\Gothic2.exe
+	CustomStarterNotFound:
 
 SectionEnd
 
