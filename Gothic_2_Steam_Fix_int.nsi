@@ -2,7 +2,6 @@ SetCompressor lzma
 var DirectoryText
 
 !include "MUI.nsh"
-!include "FileFunc.nsh"
 
 ###################################
 ##            Макросы            ##
@@ -44,7 +43,7 @@ VIAddVersionKey "ProductVersion" "${MOD_VERSION}"
 
 Caption "${MOD_NAME}"
 !define MUI_TEXT_WELCOME_INFO_TITLE "$\t   $\n$\t${MOD_NAME}"
-!define MUI_TEXT_WELCOME_INFO_TEXT "'Gothic 2 Steam Fix' is an all-in-one solution of the most known 'Gothic II: Gold Edition' problems on modern PCs. This pack includes official 2.6 patch, Union 1.0m and Player Kit 2.8 and fully compatible with english, german, french, italian, spanish and polish versions of the game."
+!define MUI_TEXT_WELCOME_INFO_TEXT "'Gothic 2 Steam Fix' is an all-in-one solution of the most known 'Gothic II: Gold Edition' problems on modern PCs. This pack includes Union 1.0m with Workshop launcher optimizer and fully compatible with english, german, french, italian, spanish and polish versions of the game."
 
 !define MUI_TEXT_DIRECTORY_SUBTITLE " "
 DirText $DirectoryText

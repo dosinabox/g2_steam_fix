@@ -3,18 +3,6 @@ SetCompressor lzma
 var DirectoryText
 
 !include "MUI.nsh"
-!include "FileFunc.nsh"
-
-###################################
-##            Макросы            ##
-###################################
-
-!macro GMF_File_Rename FILENAME_1 FILENAME_2
-	File "${FILENAME_1}"
-	IfFileExists "${FILENAME_2}" "" +2
-	Delete "${FILENAME_2}"
-	Rename "${FILENAME_1}" "${FILENAME_2}"
-!macroend
 
 ###################################
 ##            Основное           ##
@@ -157,15 +145,7 @@ Section "Широкоформатный монитор" SecAdditional_2
 SectionEnd
 
 
-Section /o "Расширенная Рудниковая долина" SecAdditional_3
-
-	SetOutPath "$INSTDIR\Data\ModVDF"
-	File "scriptpatch_v${SCRIPTPATCH_VERSION}_wasteland.mod"
-
-SectionEnd
-
-
-Section /o "Поддержка геймпада" SecAdditional_4
+Section /o "Поддержка геймпада" SecAdditional_3
 
 	SetOutPath "$INSTDIR\Data\Plugins"
 	File "zGamePad.vdf"
@@ -177,18 +157,16 @@ SectionEnd
 ##     Описание компонентов      ##
 ###################################
 
-LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты сборника (Union 1.0m, оптимизатор лаунчера)."
+LangString DESC_SecMain ${LANG_RUSSIAN} "Основные компоненты сборника (Union 1.0m, оптимизатор лаунчера, неофициальное обновление)."
 LangString DESC_SecAdditional_1 ${LANG_RUSSIAN} "Снимите галочку, если установка производится на версию игры без русской озвучки."
 LangString DESC_SecAdditional_2 ${LANG_RUSSIAN} "Установка фона главного меню и загрузочных экранов для широкоформатных мониторов."
-LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Мод Wasteland, расширяющий и заполняющий мир Рудниковой долины до размеров Готики 1."
-LangString DESC_SecAdditional_4 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите играть на геймпаде."
+LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите играть на геймпаде."
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SecMain} $(DESC_SecMain)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_1} $(DESC_SecAdditional_1)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_2} $(DESC_SecAdditional_2)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_3} $(DESC_SecAdditional_3)
-!insertmacro MUI_DESCRIPTION_TEXT ${SecAdditional_4} $(DESC_SecAdditional_4)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ###################################
