@@ -3938,6 +3938,12 @@
         HEX @0x005322A2 = 'E9 F3 C2 13 00 90 90'
         HEX @0x0066E5BE = '81 7C E4 20 00 00 C0 FF 0F 84 2A 2B EC FF 81 7C E4 20 00 00 C0 7F 0F 84 1C 2B EC FF E9 C1 2A EC FF'
         HEX @0x0061E412 = 'E8 A7 01 05 00'
+        #assembler [0x005314F0]
+            mov     eax, [esp+04h]
+            cmp     dword ptr [eax], 0FFC00000h
+            je      0x0053158F
+            orgcode
+        #/assembler
     #/patch
 
     #patch [Simple Window]    

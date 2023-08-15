@@ -9,10 +9,10 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "11.2022"
-!define MOD_DETAILED_VERSION "22.11.13.0"
+!define MOD_VERSION "08.2023"
+!define MOD_DETAILED_VERSION "23.8.15.0"
 !define MOD_AUTHOR "D36"
-!define SCRIPTPATCH_VERSION "28"
+!define SCRIPTPATCH_VERSION "29"
 
 Name "${MOD_NAME}"
 OutFile "Gothic_2_Steam_Fix_RU_${MOD_VERSION}.exe"
@@ -77,15 +77,15 @@ Section "Основные патчи и обновления" SecMain
 	SectionIn RO
 
 	Delete "$INSTDIR\VDFS.dmp"
-	Delete "$INSTDIR\System\dinput.dll"
+	Delete "$INSTDIR\system\dinput.dll"
 	Delete "$INSTDIR\Data\SystemPack.vdf"
-	Delete "$INSTDIR\_work\data\Video\Logo2.bik"
+	Delete "$INSTDIR\_work\Data\Video\Logo2.bik"
 
 	SetOutPath "$INSTDIR"
 	File "Changelog_G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}.txt"
 	File "Union.url"
 
-	SetOutPath "$INSTDIR\_work\data\Video"
+	SetOutPath "$INSTDIR\_work\Data\Video"
 	File "Logo1.bik"
 
 	SetOutPath "$INSTDIR\Data"
@@ -99,7 +99,7 @@ Section "Основные патчи и обновления" SecMain
 	SetOutPath "$INSTDIR\launcher"
 	File "d3d11.dll"
 
-	SetOutPath "$INSTDIR\System"
+	SetOutPath "$INSTDIR\system"
 	File "Gothic.ini"
 	File "GothicGame.ini"
 	File "GothicGame.rtf"
@@ -113,15 +113,23 @@ Section "Основные патчи и обновления" SecMain
 	File "G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}.ini"
 	File "G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}.rtf"
 
-	SetOutPath "$INSTDIR\System\autorun"
+	SetOutPath "$INSTDIR\system\autorun"
 	File "AutoScreenRes.dll"
 
-	SetOutPath "$INSTDIR\_work\data\Music\NewWorld"
+	SetOutPath "$INSTDIR\_work\Data\Music\newworld"
 	File "KAS_Loop_DayStd.sgt"
 
 	CreateDirectory "$INSTDIR\Saves_G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}\current"
 
-	IfFileExists "$INSTDIR\System\GothicMod.exe" 0 CustomStarterNotFound
+	IfFileExists "$INSTDIR\Data\ModVDF\g2_classic_ru.mod" 0 G2ClassicNotFound
+	SetOutPath "$INSTDIR\Data\ModVDF"
+	File "g2_classic_ru_hotfix.mod"
+	SetOutPath "$INSTDIR\system"
+	File "g2_classic.ini"
+	File "GothicGameClassicRU.rtf"
+	G2ClassicNotFound:
+
+	IfFileExists "$INSTDIR\system\GothicMod.exe" 0 CustomStarterNotFound
 	Delete "$INSTDIR\system\Gothic2.exe"
 	Rename $INSTDIR\system\GothicMod.exe $INSTDIR\system\Gothic2.exe
 	CustomStarterNotFound:
@@ -183,14 +191,14 @@ Function .onInit
 	ReadRegStr $INSTDIR HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 39510" "InstallLocation"
 	StrCmp $INSTDIR "" "" InstallPathIsFound
 	InstallPathIsFound:
-	IfFileExists "$INSTDIR\System\Gothic2.exe" InstallPathIsGood
+	IfFileExists "$INSTDIR\system\Gothic2.exe" InstallPathIsGood
 	StrCpy $INSTDIR "$PROGRAMFILES\Steam\steamapps\common\Gothic II"
 	StrCpy $DirectoryText "Нажмите кнопку 'Обзор ...' и укажите папку, в которой установлена Gothic II: Gold Edition. Как правило, это Steam\steamapps\common\Gothic II.$\n$\nЗатем нажмите кнопку 'Далее' для продолжения."
 	InstallPathIsGood:
 FunctionEnd
 
 Function .onVerifyInstDir
-	IfFileExists "$INSTDIR\System\Gothic2.exe" CheckIsSuccessful
+	IfFileExists "$INSTDIR\system\Gothic2.exe" CheckIsSuccessful
 	Abort
 	CheckIsSuccessful:
 FunctionEnd
