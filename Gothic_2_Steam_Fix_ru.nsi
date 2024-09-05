@@ -9,10 +9,10 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "08.2023"
-!define MOD_DETAILED_VERSION "23.8.15.0"
+!define MOD_VERSION "09.2024"
+!define MOD_DETAILED_VERSION "24.9.5.0"
 !define MOD_AUTHOR "D36"
-!define SCRIPTPATCH_VERSION "29"
+!define SCRIPTPATCH_VERSION "30"
 
 Name "${MOD_NAME}"
 OutFile "Gothic_2_Steam_Fix_RU_${MOD_VERSION}.exe"
@@ -117,6 +117,8 @@ Section "Основные патчи и обновления" SecMain
 	File "AutoScreenRes.dll"
 
 	SetOutPath "$INSTDIR\_work\Data\Music\newworld"
+	File "Xardas Tower.sty"
+	File "XT_DayStd.sgt"
 	File "KAS_Loop_DayStd.sgt"
 
 	CreateDirectory "$INSTDIR\Saves_G2a_NR_ScriptPatch_v${SCRIPTPATCH_VERSION}\current"
