@@ -9,10 +9,10 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "09.2024"
-!define MOD_DETAILED_VERSION "24.9.5.0"
+!define MOD_VERSION "07.2025"
+!define MOD_DETAILED_VERSION "25.7.1.0"
 !define MOD_AUTHOR "D36"
-!define SCRIPTPATCH_VERSION "30"
+!define SCRIPTPATCH_VERSION "31"
 
 Name "${MOD_NAME}"
 OutFile "Gothic_2_Steam_Fix_RU_${MOD_VERSION}.exe"
@@ -130,36 +130,24 @@ Section "Основные патчи и обновления" SecMain
 	File "g2_classic.ini"
 	File "GothicGameClassicRU.rtf"
 	G2ClassicNotFound:
-
-	IfFileExists "$INSTDIR\system\GothicMod.exe" 0 CustomStarterNotFound
-	Delete "$INSTDIR\system\Gothic2.exe"
-	Rename $INSTDIR\system\GothicMod.exe $INSTDIR\system\Gothic2.exe
-	CustomStarterNotFound:
-
 SectionEnd
 
 
 Section "Дополнительная русская озвучка" SecAdditional_1
-
 	SetOutPath "$INSTDIR\Data\ModVDF"
 	File "scriptpatch_v${SCRIPTPATCH_VERSION}_speech_add_ru.mod"
-
 SectionEnd
 
 
 Section "Широкоформатный монитор" SecAdditional_2
-
 	SetOutPath "$INSTDIR\Data"
 	File "Textures_Russian_Widescreen.vdf"
-
 SectionEnd
 
 
 Section /o "Поддержка геймпада" SecAdditional_3
-
 	SetOutPath "$INSTDIR\Data\Plugins"
 	File "zGamePad.vdf"
-
 SectionEnd
 
 

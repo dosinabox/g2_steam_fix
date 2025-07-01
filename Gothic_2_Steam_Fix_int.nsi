@@ -19,8 +19,8 @@ var DirectoryText
 ###################################
 
 !define MOD_NAME "Gothic 2 Steam Fix"
-!define MOD_VERSION "09.2024"
-!define MOD_DETAILED_VERSION "24.9.5.0"
+!define MOD_VERSION "07.2025"
+!define MOD_DETAILED_VERSION "25.7.1.0"
 !define MOD_AUTHOR "D36"
 
 Name "${MOD_NAME}"
@@ -107,12 +107,6 @@ Section "Main" SecMain
 	SetOutPath "$INSTDIR\_work\Data\Music\newworld"
 	File "Xardas Tower.sty"
 	File "XT_DayStd.sgt"
-
-	IfFileExists "$INSTDIR\system\GothicMod.exe" 0 CustomStarterNotFound
-	Delete "$INSTDIR\system\Gothic2.exe"
-	Rename $INSTDIR\system\GothicMod.exe $INSTDIR\system\Gothic2.exe
-	CustomStarterNotFound:
-
 SectionEnd
 
 ###################################
