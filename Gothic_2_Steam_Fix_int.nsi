@@ -1,4 +1,4 @@
-SetCompressor lzma
+SetCompressor /SOLID /FINAL lzma
 var DirectoryText
 
 !include "MUI.nsh"
@@ -114,7 +114,6 @@ SectionEnd
 ###################################
 
 Function .onInit
-	SetSilent normal
 	StrCpy $DirectoryText "Gothic II: Gold Edition installation folder is found, press 'Install' button to continue or 'Browse...' to select another install location."
 	SetRegView 32
 	ReadRegStr $INSTDIR HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 39510" "InstallLocation"

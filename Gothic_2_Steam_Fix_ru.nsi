@@ -1,5 +1,5 @@
 Unicode true
-SetCompressor lzma
+SetCompressor /SOLID /FINAL lzma
 var DirectoryText
 
 !include "MUI.nsh"
@@ -172,7 +172,6 @@ LangString DESC_SecAdditional_3 ${LANG_RUSSIAN} "Выберите эту опцию, если хотите
 ###################################
 
 Function .onInit
-	SetSilent normal
 	StrCpy $DirectoryText "Обнаружена установленная Steam-версия Gothic II: Gold Edition. Нажмите кнопку 'Далее' для продолжения или 'Обзор ...' для выбора другой папки."
 	SetRegView 32
 	ReadRegStr $INSTDIR HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 39510" "InstallLocation"
