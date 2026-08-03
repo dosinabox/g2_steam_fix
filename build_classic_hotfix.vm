@@ -1,0 +1,9 @@
+[BEGINVDF]
+Comment=G2 Classic RU (v1.7, %%D)%%N© D36, Kor Angar
+BaseDir=C:\projects\gothic\g2_steam_fix\res\classic_hotfix
+VDFName=g2_classic_ru_hotfix.mod
+[FILES]
+[EXCLUDE]
+[INCLUDE]
+* -r
+[ENDVDF]

@@ -1,0 +1,17 @@
+[BEGINVDF]
+Comment=Неофициальное обновление Г2НВ (версия 32) - контент на русском языке.%%NДата и время сборки: %%D%%N%%N© Fizzban, Efectivo, Dimus, D36, Kvincius, Kor Angar
+BaseDir=C:\projects\gothic\g2unup\res\ru
+VDFName=scriptpatch_v32_ru.mod
+[FILES]
+* -r
+[EXCLUDE]
+_WORK\DATA\TEXTURES\_COMPILED\CONSOLE-C.TEX -r
+_WORK\DATA\TEXTURES\_COMPILED\MENU_GOTHIC-C.TEX -r
+_WORK\DATA\TEXTURES\_COMPILED\MENU_GOTHICSHADOW-C.TEX -r
+_WORK\DATA\TEXTURES\_COMPILED\NW_SEQ_EGG_SIGN_01-C.TEX -r
+_WORK\DATA\TEXTURES\_COMPILED\NW_SEQ_EGG_SIGN_02-C.TEX -r
+_WORK\DATA\TEXTURES\_COMPILED\OW_256_TEXTOLDWORLD-C.TEX -r
+_WORK\DATA\TEXTURES\_COMPILED\SAVING-C.TEX -r
+SPLASH.BMP -r
+[INCLUDE]
+[ENDVDF]

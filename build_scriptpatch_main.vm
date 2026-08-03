@@ -1,0 +1,10 @@
+[BEGINVDF]
+Comment=Неофициальное обновление Г2НВ (версия 32) - базовый контент.%%NДата и время сборки: %%D%%N%%N© Fizzban, Efectivo, Dimus, D36, Kvincius, Kor Angar
+BaseDir=C:\projects\gothic\g2unup\res\main
+VDFName=scriptpatch_v32.mod
+[FILES]
+* -r
+[EXCLUDE]
+_WORK\DATA\TEXTURES\_COMPILED\FONT_* -r
+[INCLUDE]
+[ENDVDF]
